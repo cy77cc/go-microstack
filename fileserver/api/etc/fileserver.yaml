@@ -19,9 +19,9 @@ FileRpc:
     Key: fileserver.rpc
 
 Auth:
-  AccessSecret: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+  AccessSecret: ${SERVER_SECRET}
   AccessExpire: 3600
 
 Sign:
-  Secret: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+  Secret: ${SERVER_SECRET}
   SkewSec: 300

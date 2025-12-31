@@ -35,6 +35,6 @@ minio:
   username: ${MINIO_USERNAME}
   password: ${MINIO_PASSWORD}
 
-Salt: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+Salt: ${SERVER_SALT}
 Auth: false
 StrictControl: true

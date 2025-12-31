@@ -30,9 +30,9 @@ Mysql:
   password: ${MYSQL_PASSWORD}
 
 JwtAuth:
-  AccessSecret: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+  AccessSecret: ${SERVER_SECRET}
   AccessExpire: 10080
 
-Salt: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+Salt: ${SERVER_SALT}
 Auth: false
 StrictControl: true
