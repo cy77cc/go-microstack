@@ -18,11 +18,11 @@ type (
 	}
 	// 登录/注册响应（包含 Token）
 	TokenResp {
-		AccessToken  string   `json:"accessToken"`  // 访问令牌
+		AccessToken  string   `json:"accessToken"` // 访问令牌
 		RefreshToken string   `json:"refreshToken"` // 刷新令牌
-		Expires      int64    `json:"expires"`      // 过期时间（秒）
-		Uid          uint64   `json:"uid"`          // 用户ID
-		Roles        []string `json:"roles"`        // 用户角色列表
+		Expires      int64    `json:"expires"` // 过期时间（秒）
+		Uid          uint64   `json:"uid"` // 用户ID
+		Roles        []string `json:"roles"` // 用户角色列表
 	}
 	// 刷新 Token 请求
 	RefreshReq {
@@ -36,115 +36,115 @@ type (
 	UserCreateReq {
 		Username string `json:"username"` // 用户名
 		Password string `json:"password"` // 密码
-		Email    string `json:"email"`    // 邮箱
-		Phone    string `json:"phone"`    // 手机号
-		Avatar   string `json:"avatar"`   // 头像地址
+		Email    string `json:"email"` // 邮箱
+		Phone    string `json:"phone"` // 手机号
+		Avatar   string `json:"avatar"` // 头像地址
 	}
 	// 用户更新请求
 	UserUpdateReq {
-		Id     uint64 `path:"id"`     // 用户ID
-		Email  string `json:"email"`  // 邮箱
-		Phone  string `json:"phone"`  // 手机号
+		Id     uint64 `path:"id"` // 用户ID
+		Email  string `json:"email"` // 邮箱
+		Phone  string `json:"phone"` // 手机号
 		Avatar string `json:"avatar"` // 头像地址
 		Status int32  `json:"status"` // 状态：1正常，0禁用
 	}
 	// 用户信息响应
 	UserResp {
-		Id            uint64 `json:"id"`            // 用户ID
-		Username      string `json:"username"`      // 用户名
-		Email         string `json:"email"`         // 邮箱
-		Phone         string `json:"phone"`         // 手机号
-		Avatar        string `json:"avatar"`        // 头像地址
-		Status        int32  `json:"status"`        // 状态
-		CreateTime    int64  `json:"createTime"`    // 创建时间
-		UpdateTime    int64  `json:"updateTime"`    // 更新时间
+		Id            uint64 `json:"id"` // 用户ID
+		Username      string `json:"username"` // 用户名
+		Email         string `json:"email"` // 邮箱
+		Phone         string `json:"phone"` // 手机号
+		Avatar        string `json:"avatar"` // 头像地址
+		Status        int32  `json:"status"` // 状态
+		CreateTime    int64  `json:"createTime"` // 创建时间
+		UpdateTime    int64  `json:"updateTime"` // 更新时间
 		LastLoginTime int64  `json:"lastLoginTime"` // 最后登录时间
 	}
 	// 用户列表请求
 	UserListReq {
-		Page     int32  `query:"page"`     // 页码
-		PageSize int32  `query:"pageSize"` // 每页数量
-		Query    string `query:"query"`    // 搜索关键词
+		Page     int32  `form:"page"` // 页码
+		PageSize int32  `form:"pageSize"` // 每页数量
+		Query    string `form:"form"` // 搜索关键词
 	}
 	// 用户列表响应
 	UserListResp {
 		Total int64      `json:"total"` // 总数
-		List  []UserResp `json:"list"`  // 用户列表
+		List  []UserResp `json:"list"` // 用户列表
 	}
 	// 角色创建请求
 	RoleCreateReq {
-		Name        string `json:"name"`        // 角色名称
-		Code        string `json:"code"`        // 角色代码
+		Name        string `json:"name"` // 角色名称
+		Code        string `json:"code"` // 角色代码
 		Description string `json:"description"` // 描述
 	}
 	// 角色更新请求
 	RoleUpdateReq {
-		Id          uint64 `path:"id"`          // 角色ID
-		Name        string `json:"name"`        // 角色名称
+		Id          uint64 `path:"id"` // 角色ID
+		Name        string `json:"name"` // 角色名称
 		Description string `json:"description"` // 描述
-		Status      int32  `json:"status"`      // 状态
+		Status      int32  `json:"status"` // 状态
 	}
 	// 角色信息响应
 	RoleResp {
-		Id          uint64 `json:"id"`          // 角色ID
-		Name        string `json:"name"`        // 角色名称
-		Code        string `json:"code"`        // 角色代码
+		Id          uint64 `json:"id"` // 角色ID
+		Name        string `json:"name"` // 角色名称
+		Code        string `json:"code"` // 角色代码
 		Description string `json:"description"` // 描述
-		Status      int32  `json:"status"`      // 状态
-		CreateTime  int64  `json:"createTime"`  // 创建时间
-		UpdateTime  int64  `json:"updateTime"`  // 更新时间
+		Status      int32  `json:"status"` // 状态
+		CreateTime  int64  `json:"createTime"` // 创建时间
+		UpdateTime  int64  `json:"updateTime"` // 更新时间
 	}
 	// 角色列表请求
 	RoleListReq {
-		Page     int32 `query:"page"`     // 页码
-		PageSize int32 `query:"pageSize"` // 每页数量
+		Page     int32 `form:"page"` // 页码
+		PageSize int32 `form:"pageSize"` // 每页数量
 	}
 	// 角色列表响应
 	RoleListResp {
 		Total int64      `json:"total"` // 总数
-		List  []RoleResp `json:"list"`  // 角色列表
+		List  []RoleResp `json:"list"` // 角色列表
 	}
 	// 权限创建请求
 	PermissionCreateReq {
-		Name        string `json:"name"`        // 权限名称
-		Code        string `json:"code"`        // 权限代码
-		Type        int32  `json:"type"`        // 类型：1菜单，2按钮，3API
-		Resource    string `json:"resource"`    // 资源路径
-		Action      string `json:"action"`      // 动作方法 (GET, POST...)
+		Name        string `json:"name"` // 权限名称
+		Code        string `json:"code"` // 权限代码
+		Type        int32  `json:"type"` // 类型：1菜单，2按钮，3API
+		Resource    string `json:"resource"` // 资源路径
+		Action      string `json:"action"` // 动作方法 (GET, POST...)
 		Description string `json:"description"` // 描述
 	}
 	// 权限更新请求
 	PermissionUpdateReq {
-		Id          uint64 `path:"id"`          // 权限ID
-		Name        string `json:"name"`        // 权限名称
+		Id          uint64 `path:"id"` // 权限ID
+		Name        string `json:"name"` // 权限名称
 		Description string `json:"description"` // 描述
-		Status      int32  `json:"status"`      // 状态
-		Resource    string `json:"resource"`    // 资源路径
-		Action      string `json:"action"`      // 动作方法
-		Type        int32  `json:"type"`        // 类型
+		Status      int32  `json:"status"` // 状态
+		Resource    string `json:"resource"` // 资源路径
+		Action      string `json:"action"` // 动作方法
+		Type        int32  `json:"type"` // 类型
 	}
 	// 权限信息响应
 	PermissionResp {
-		Id          uint64 `json:"id"`          // 权限ID
-		Name        string `json:"name"`        // 权限名称
-		Code        string `json:"code"`        // 权限代码
-		Type        int32  `json:"type"`        // 类型
-		Resource    string `json:"resource"`    // 资源路径
-		Action      string `json:"action"`      // 动作方法
+		Id          uint64 `json:"id"` // 权限ID
+		Name        string `json:"name"` // 权限名称
+		Code        string `json:"code"` // 权限代码
+		Type        int32  `json:"type"` // 类型
+		Resource    string `json:"resource"` // 资源路径
+		Action      string `json:"action"` // 动作方法
 		Description string `json:"description"` // 描述
-		Status      int32  `json:"status"`      // 状态
-		CreateTime  int64  `json:"createTime"`  // 创建时间
-		UpdateTime  int64  `json:"updateTime"`  // 更新时间
+		Status      int32  `json:"status"` // 状态
+		CreateTime  int64  `json:"createTime"` // 创建时间
+		UpdateTime  int64  `json:"updateTime"` // 更新时间
 	}
 	// 权限列表请求
 	PermissionListReq {
-		Page     int32 `query:"page"`     // 页码
-		PageSize int32 `query:"pageSize"` // 每页数量
+		Page     int32 `form:"page"` // 页码
+		PageSize int32 `form:"pageSize"` // 每页数量
 	}
 	// 权限列表响应
 	PermissionListResp {
 		Total int64            `json:"total"` // 总数
-		List  []PermissionResp `json:"list"`  // 权限列表
+		List  []PermissionResp `json:"list"` // 权限列表
 	}
 	// 分配角色给用户
 	AssignRoleBody {
@@ -165,7 +165,7 @@ type (
 	// 检查权限请求
 	CheckPermissionReq {
 		Resource string `json:"resource"` // 资源
-		Action   string `json:"action"`   // 动作
+		Action   string `json:"action"` // 动作
 	}
 	// 检查权限响应
 	CheckPermissionResp {
@@ -325,3 +325,4 @@ service usercenter {
 	@handler CheckPermission
 	post /rbac/check (CheckPermissionReq) returns (CheckPermissionResp)
 }
+

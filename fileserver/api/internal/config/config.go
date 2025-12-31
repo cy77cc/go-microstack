@@ -16,7 +16,7 @@ type Config struct {
 	} `json:",optional"`
 	FileRpc zrpc.RpcClientConf `json:",optional"`
 	Sign    struct {
-		Secret  string `yaml:"Secret"`
-		SkewSec int64  `yaml:"SkewSec"`
-	} `yaml:"Sign" json:",optional"`
+		Secret  string
+		SkewSec int64
+	}
 }

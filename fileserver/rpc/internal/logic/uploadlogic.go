@@ -66,7 +66,7 @@ func (l *UploadLogic) Upload(in *pb.UploadReq) (*pb.UploadResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	etag, err := stor.PutObject(l.ctx, in.Bucket, in.ObjectName, in.Data, in.ContentType)
+	etag, err := stor.PutObject(l.ctx, in.Bucket, in.ObjectName, in.Data, in.Hash, in.ContentType)
 	if err != nil {
 		return nil, err
 	}

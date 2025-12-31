@@ -10,26 +10,26 @@ info (
 type (
 	// 单文件上传请求
 	UploadFileReq {
-		Bucket      string `form:"bucket"`      // 存储桶名称
-		Key         string `form:"key"`         // 文件路径/名称
-		Hash        string `form:"hash"`        // 文件Hash
-		Size        int64  `form:"size"`        // 文件大小
+		Bucket      string `form:"bucket"` // 存储桶名称
+		Key         string `form:"key"` // 文件路径/名称
+		Hash        string `form:"hash"` // 文件Hash
+		Size        int64  `form:"size"` // 文件大小
 		ContentType string `form:"contentType"` // MIME类型
 	}
 	// 单文件上传响应
 	UploadFileResp {
 		FileId string `json:"fileId"` // 文件ID
 		Bucket string `json:"bucket"` // 存储桶
-		Key    string `json:"key"`    // 文件路径
-		Size   int64  `json:"size"`   // 大小
-		ETag   string `json:"eTag"`   // ETag
+		Key    string `json:"key"` // 文件路径
+		Size   int64  `json:"size"` // 大小
+		ETag   string `json:"eTag"` // ETag
 	}
 	// 初始化分片上传请求
 	InitiateMultipartReq {
-		Bucket      string `json:"bucket"`      // 存储桶
-		Key         string `json:"key"`         // 文件路径
-		Hash        string `json:"hash"`        // 文件Hash
-		Size        int64  `json:"size"`        // 总大小
+		Bucket      string `json:"bucket"` // 存储桶
+		Key         string `json:"key"` // 文件路径
+		Hash        string `json:"hash"` // 文件Hash
+		Size        int64  `json:"size"` // 总大小
 		ContentType string `json:"contentType"` // MIME类型
 	}
 	// 初始化分片上传响应
@@ -38,30 +38,30 @@ type (
 	}
 	// 上传分片请求（参数在Path中，Body为文件内容）
 	UploadPartReq {
-		UploadId   string `path:"uploadId"`   // 分片上传ID
+		UploadId   string `path:"uploadId"` // 分片上传ID
 		PartNumber uint32 `path:"partNumber"` // 分片序号
 	}
 	// 上传分片响应
 	UploadPartResp {
-		ETag       string `json:"eTag"`       // 分片ETag
+		ETag       string `json:"eTag"` // 分片ETag
 		PartNumber uint32 `json:"partNumber"` // 分片序号
 	}
 	// 完成分片信息
 	CompletedPart {
 		PartNumber uint32 `json:"partNumber"` // 分片序号
-		ETag       string `json:"eTag"`       // ETag
+		ETag       string `json:"eTag"` // ETag
 	}
 	// 完成分片上传请求
 	CompleteMultipartReq {
 		UploadId string          `path:"uploadId"` // 分片上传ID
-		Parts    []CompletedPart `json:"parts"`    // 所有分片信息
+		Parts    []CompletedPart `json:"parts"` // 所有分片信息
 	}
 	// 完成分片上传响应
 	CompleteMultipartResp {
 		FileId string `json:"fileId"` // 文件ID
 		Bucket string `json:"bucket"` // 存储桶
-		Key    string `json:"key"`    // 文件路径
-		Size   int64  `json:"size"`   // 最终大小
+		Key    string `json:"key"` // 文件路径
+		Size   int64  `json:"size"` // 最终大小
 	}
 	// 终止分片上传请求
 	AbortMultipartReq {
@@ -69,25 +69,25 @@ type (
 	}
 	// 文件元数据响应
 	FileMetaResp {
-		FileId      string `json:"fileId"`      // 文件ID
-		FileName    string `json:"fileName"`    // 文件名
-		Bucket      string `json:"bucket"`      // 存储桶
-		Key         string `json:"key"`         // 路径
-		Size        int64  `json:"size"`        // 大小
+		FileId      string `json:"fileId"` // 文件ID
+		FileName    string `json:"fileName"` // 文件名
+		Bucket      string `json:"bucket"` // 存储桶
+		Key         string `json:"key"` // 路径
+		Size        int64  `json:"size"` // 大小
 		ContentType string `json:"contentType"` // MIME类型
-		Uploader    uint64 `json:"uploader"`    // 上传者ID
-		UploadTime  int64  `json:"uploadTime"`  // 上传时间
-		Hash        string `json:"hash"`        // Hash值
-		Status      int64  `json:"status"`      // 状态
+		Uploader    uint64 `json:"uploader"` // 上传者ID
+		UploadTime  int64  `json:"uploadTime"` // 上传时间
+		Hash        string `json:"hash"` // Hash值
+		Status      int64  `json:"status"` // 状态
 	}
 	// 预签名URL响应
 	PresignResp {
-		Url    string `json:"url"`    // 访问URL
+		Url    string `json:"url"` // 访问URL
 		Expire int64  `json:"expire"` // 过期时间戳
 	}
 	// 创建Bucket请求
 	BucketReq {
-		Bucket      string `json:"bucket"`      // Bucket名称
+		Bucket      string `json:"bucket"` // Bucket名称
 		StorageType int32  `json:"storageType"` // 存储类型
 	}
 	// Bucket响应
@@ -124,7 +124,6 @@ service fileserver {
 	middleware: SignatureMiddleware
 	group:      files
 )
-
 service fileserver {
 	@doc "单文件上传"
 	@handler UploadFile
@@ -162,3 +161,4 @@ service fileserver {
 	@handler AbortMultipartUpload
 	delete /uploads/:uploadId (AbortMultipartReq)
 }
+

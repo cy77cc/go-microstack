@@ -95,7 +95,7 @@ type Gateway struct {
 		AccessExpire int64  `yaml:"access_expire" json:"access_expire"`
 	} `yaml:"auth" json:"auth"`
 	Sign struct {
-		SignSecret string `yaml:"sign_secret" json:"sign_secret"`
-		SkewSec    int64  `yaml:"skew_sec" json:"skew_sec"`
+		Secret  string `yaml:"secret" json:"secret"`
+		SkewSec int64  `yaml:"skew_sec" json:"skew_sec"`
 	} `yaml:"sign" json:"sign"`
 }

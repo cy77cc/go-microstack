@@ -50,4 +50,3 @@ Go Microstack 是一个基于 [Go Zero](https://go-zero.dev/) 微服务框架构
 
 ## 联系方式
 *   Author: zhangdongping
-*   Support: keson.an

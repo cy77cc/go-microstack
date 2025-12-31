@@ -22,7 +22,7 @@ import (
 
 type Storage interface {
 	CreateBucket(ctx context.Context, bucket string) error
-	PutObject(ctx context.Context, bucket, objectName string, data []byte, contentType string) (etag string, err error)
+	PutObject(ctx context.Context, bucket, objectName string, data []byte, Hash string, contentType string) (etag string, err error)
 	GetObject(ctx context.Context, bucket, objectName string) (payload []byte, contentType string, err error)
 	InitiateMultipart(ctx context.Context, bucket, objectName string, contentType string) (uploadID string, err error)
 	UploadPart(ctx context.Context, bucket, objectName, uploadID string, partNumber int, data []byte) (etag string, err error)
@@ -109,7 +109,7 @@ func (l *localStorage) CreateBucket(ctx context.Context, bucket string) error {
 	return l.ensureBucket(bucket)
 }
 
-func (l *localStorage) PutObject(ctx context.Context, bucket, objectName string, data []byte, contentType string) (string, error) {
+func (l *localStorage) PutObject(ctx context.Context, bucket, objectName string, data []byte, hash string, contentType string) (string, error) {
 	if err := l.ensureBucket(bucket); err != nil {
 		return "", err
 	}
@@ -223,9 +223,11 @@ func (m *minioStorage) CreateBucket(ctx context.Context, bucket string) error {
 	return m.core.MakeBucket(ctx, bucket, minio.MakeBucketOptions{})
 }
 
-func (m *minioStorage) PutObject(ctx context.Context, bucket, objectName string, data []byte, contentType string) (string, error) {
+func (m *minioStorage) PutObject(ctx context.Context, bucket, objectName string, data []byte, hash string, contentType string) (string, error) {
 	r := bytes.NewReader(data)
-	info, err := m.core.PutObject(ctx, bucket, objectName, r, int64(len(data)), contentType, "", minio.PutObjectOptions{})
+	info, err := m.cli.PutObject(ctx, bucket, objectName, r, int64(len(data)), minio.PutObjectOptions{
+		ContentType: contentType,
+	})
 	if err != nil {
 		return "", err
 	}

@@ -234,7 +234,7 @@ func (h *Handler) injectSecurityHeaders(req *http.Request) {
 	// Signature
 	secret := ""
 	if h.cfg != nil {
-		secret = h.cfg.Gateway.Sign.SignSecret
+		secret = h.cfg.Gateway.Sign.Secret
 	}
 	if secret == "" {
 		return

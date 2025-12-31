@@ -20,6 +20,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 健康检查
 				Method:  http.MethodGet,
 				Path:    "/health",
 				Handler: GetHealthHandler(serverCtx),
@@ -32,21 +33,25 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SignatureMiddleware},
 			[]rest.Route{
 				{
+					// 用户登录
 					Method:  http.MethodPost,
 					Path:    "/auth/login",
 					Handler: auth.LoginHandler(serverCtx),
 				},
 				{
+					// 用户登出
 					Method:  http.MethodPost,
 					Path:    "/auth/logout",
 					Handler: auth.LogoutHandler(serverCtx),
 				},
 				{
+					// 刷新Token
 					Method:  http.MethodPost,
 					Path:    "/auth/refresh",
 					Handler: auth.RefreshHandler(serverCtx),
 				},
 				{
+					// 用户注册
 					Method:  http.MethodPost,
 					Path:    "/auth/register",
 					Handler: auth.RegisterHandler(serverCtx),
@@ -61,26 +66,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SignatureMiddleware},
 			[]rest.Route{
 				{
+					// 创建权限
 					Method:  http.MethodPost,
 					Path:    "/permissions",
 					Handler: permissions.CreatePermissionHandler(serverCtx),
 				},
 				{
+					// 获取权限列表
 					Method:  http.MethodGet,
 					Path:    "/permissions",
 					Handler: permissions.ListPermissionsHandler(serverCtx),
 				},
 				{
+					// 获取权限信息
 					Method:  http.MethodGet,
 					Path:    "/permissions/:id",
 					Handler: permissions.GetPermissionHandler(serverCtx),
 				},
 				{
+					// 更新权限信息
 					Method:  http.MethodPut,
 					Path:    "/permissions/:id",
 					Handler: permissions.UpdatePermissionHandler(serverCtx),
 				},
 				{
+					// 删除权限
 					Method:  http.MethodDelete,
 					Path:    "/permissions/:id",
 					Handler: permissions.DeletePermissionHandler(serverCtx),
@@ -96,6 +106,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SignatureMiddleware},
 			[]rest.Route{
 				{
+					// 检查用户权限
 					Method:  http.MethodPost,
 					Path:    "/rbac/check",
 					Handler: rbac.CheckPermissionHandler(serverCtx),
@@ -111,44 +122,52 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SignatureMiddleware},
 			[]rest.Route{
 				{
+					// 创建角色
 					Method:  http.MethodPost,
 					Path:    "/roles",
 					Handler: roles.CreateRoleHandler(serverCtx),
 				},
 				{
+					// 获取角色列表
 					Method:  http.MethodGet,
 					Path:    "/roles",
 					Handler: roles.ListRolesHandler(serverCtx),
 				},
 				{
+					// 获取角色信息
 					Method:  http.MethodGet,
 					Path:    "/roles/:id",
 					Handler: roles.GetRoleHandler(serverCtx),
 				},
 				{
+					// 更新角色信息
 					Method:  http.MethodPut,
 					Path:    "/roles/:id",
 					Handler: roles.UpdateRoleHandler(serverCtx),
 				},
 				{
+					// 删除角色
 					Method:  http.MethodDelete,
 					Path:    "/roles/:id",
 					Handler: roles.DeleteRoleHandler(serverCtx),
 				},
 				{
+					// 给角色分配权限
 					Method:  http.MethodPost,
 					Path:    "/roles/:id/permissions",
 					Handler: roles.GrantPermissionToRoleHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodDelete,
-					Path:    "/roles/:id/permissions",
-					Handler: roles.RevokePermissionFromRoleHandler(serverCtx),
-				},
-				{
+					// 获取角色的权限列表
 					Method:  http.MethodGet,
 					Path:    "/roles/:id/permissions",
 					Handler: roles.ListRolePermissionsHandler(serverCtx),
+				},
+				{
+					// 移除角色的权限
+					Method:  http.MethodDelete,
+					Path:    "/roles/:id/permissions",
+					Handler: roles.RevokePermissionFromRoleHandler(serverCtx),
 				},
 			}...,
 		),
@@ -161,44 +180,52 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SignatureMiddleware},
 			[]rest.Route{
 				{
+					// 创建用户
 					Method:  http.MethodPost,
 					Path:    "/users",
 					Handler: users.CreateUserHandler(serverCtx),
 				},
 				{
+					// 获取用户列表
 					Method:  http.MethodGet,
 					Path:    "/users",
 					Handler: users.ListUsersHandler(serverCtx),
 				},
 				{
+					// 获取用户信息
 					Method:  http.MethodGet,
 					Path:    "/users/:id",
 					Handler: users.GetUserHandler(serverCtx),
 				},
 				{
+					// 更新用户信息
 					Method:  http.MethodPut,
 					Path:    "/users/:id",
 					Handler: users.UpdateUserHandler(serverCtx),
 				},
 				{
+					// 删除用户
 					Method:  http.MethodDelete,
 					Path:    "/users/:id",
 					Handler: users.DeleteUserHandler(serverCtx),
 				},
 				{
+					// 分配角色给用户
 					Method:  http.MethodPost,
 					Path:    "/users/:id/roles",
 					Handler: users.AssignRoleToUserHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodDelete,
-					Path:    "/users/:id/roles",
-					Handler: users.RevokeRoleFromUserHandler(serverCtx),
-				},
-				{
+					// 获取用户的角色列表
 					Method:  http.MethodGet,
 					Path:    "/users/:id/roles",
 					Handler: users.ListUserRolesHandler(serverCtx),
+				},
+				{
+					// 移除用户的角色
+					Method:  http.MethodDelete,
+					Path:    "/users/:id/roles",
+					Handler: users.RevokeRoleFromUserHandler(serverCtx),
 				},
 			}...,
 		),

@@ -47,6 +47,7 @@ func NewNacosInstance(cfg *Config) (*Instance, error) {
 		SecretKey:   cfg.IdentityVal,
 		LogDir:      "log",
 		TimeoutMs:   cfg.TimeoutMs,
+		NotLoadCacheAtStart: true,
 	}
 
 	namingClient, err := clients.NewNamingClient(vo.NacosClientParam{

@@ -157,6 +157,8 @@ func main() {
 	// 创建代理处理器
 	proxyHandler := proxy.NewProxyHandler(regClient, lb)
 
+	proxyHandler.OnConfigChange(currentConfig)
+
 	// 创建路由器
 	r := router.NewRouter()
 

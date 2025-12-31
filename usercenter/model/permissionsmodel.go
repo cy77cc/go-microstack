@@ -44,7 +44,7 @@ func (m *customPermissionsModel) FindAll(ctx context.Context, page, pageSize int
 	err := m.defaultPermissionsModel.QueryRowCtx(
 		ctx,
 		&count,
-		fmt.Sprintf("usercenter:all_permissions_count"),
+		"usercenter:all_permissions_count",
 		func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 			return conn.QueryRowCtx(ctx, v, countQuery)
 		},
@@ -52,6 +52,7 @@ func (m *customPermissionsModel) FindAll(ctx context.Context, page, pageSize int
 	if err != nil {
 		return nil, 0, err
 	}
+
 	query := fmt.Sprintf("SELECT %s FROM %s LIMIT ?, ?", permissionsRows, m.table)
 	err = m.defaultPermissionsModel.QueryRowsNoCacheCtx(
 		ctx,
