@@ -1,5 +1,5 @@
 Name: fileserver.rpc
-ListenOn: 0.0.0.0:40011
+ListenOn: 0.0.0.0:41011
 
 register:
   type: nacos # 可选: nacos, consul, etcd, zookeeper
@@ -36,5 +36,5 @@ minio:
   password: ${MINIO_PASSWORD}
 
 Salt: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
-Auth: true
+Auth: false
 StrictControl: true

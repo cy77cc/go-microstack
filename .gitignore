@@ -45,3 +45,5 @@ log/
 *.local.yaml
 
 test/
+
+Bruno/

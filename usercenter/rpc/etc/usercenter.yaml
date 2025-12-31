@@ -1,5 +1,5 @@
 Name: usercenter.rpc
-ListenOn: 0.0.0.0:40012
+ListenOn: 0.0.0.0:41012
 
 register:
   type: nacos # 可选: nacos, consul, etcd, zookeeper
@@ -15,7 +15,7 @@ Redis:
   Host: ${REDIS_HOST}:${REDIS_PORT}
   Type: node
   Pass: ${REDIS_PASSWORD}
-  Key: fileserver:rpc
+  Key: rpc:auth
 
 CacheRedis:
   - Host: ${REDIS_HOST}:${REDIS_PORT}
