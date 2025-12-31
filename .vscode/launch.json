@@ -11,7 +11,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/gateway/cmd/gateway/.",
             "args": [
-                "--config",
+                "-config",
                 "${workspaceFolder}/gateway/etc/config.yaml"
             ],
             "envFile": "${workspaceFolder}/.env",
