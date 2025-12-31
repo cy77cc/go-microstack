@@ -1,0 +1,1742 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "用户中心 API",
+    "contact": {
+      "name": "keson.an",
+      "url": "https://blog.cy77cc.cn",
+      "email": "483564813@qq.com"
+    },
+    "version": "1.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/health": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "健康检查",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "状态",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/auth/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "用户登录",
+        "operationId": "authLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "密码",
+                  "type": "string"
+                },
+                "username": {
+                  "description": "用户名",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accessToken": {
+                  "description": "访问令牌",
+                  "type": "string"
+                },
+                "expires": {
+                  "description": "过期时间（秒）",
+                  "type": "integer"
+                },
+                "refreshToken": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                },
+                "roles": {
+                  "description": "用户角色列表",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "uid": {
+                  "description": "用户ID",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/auth/logout": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "用户登出",
+        "operationId": "authLogout",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "refreshToken"
+              ],
+              "properties": {
+                "refreshToken": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/usercenter/v1/auth/refresh": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "刷新Token",
+        "operationId": "authRefresh",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "refreshToken"
+              ],
+              "properties": {
+                "refreshToken": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accessToken": {
+                  "description": "访问令牌",
+                  "type": "string"
+                },
+                "expires": {
+                  "description": "过期时间（秒）",
+                  "type": "integer"
+                },
+                "refreshToken": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                },
+                "roles": {
+                  "description": "用户角色列表",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "uid": {
+                  "description": "用户ID",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/auth/register": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "用户注册",
+        "operationId": "authRegister",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "password",
+                "email",
+                "phone",
+                "avatar"
+              ],
+              "properties": {
+                "avatar": {
+                  "description": "头像地址",
+                  "type": "string"
+                },
+                "email": {
+                  "description": "邮箱",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "密码",
+                  "type": "string"
+                },
+                "phone": {
+                  "description": "手机号",
+                  "type": "string"
+                },
+                "username": {
+                  "description": "用户名",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accessToken": {
+                  "description": "访问令牌",
+                  "type": "string"
+                },
+                "expires": {
+                  "description": "过期时间（秒）",
+                  "type": "integer"
+                },
+                "refreshToken": {
+                  "description": "刷新令牌",
+                  "type": "string"
+                },
+                "roles": {
+                  "description": "用户角色列表",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "uid": {
+                  "description": "用户ID",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/permissions": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取权限列表",
+        "operationId": "permissionsListPermissions",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "description": "权限列表",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "code",
+                      "type",
+                      "resource",
+                      "action",
+                      "description",
+                      "status",
+                      "createTime",
+                      "updateTime"
+                    ],
+                    "properties": {
+                      "action": {
+                        "description": "动作方法",
+                        "type": "string"
+                      },
+                      "code": {
+                        "description": "权限代码",
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "description": "创建时间",
+                        "type": "integer"
+                      },
+                      "description": {
+                        "description": "描述",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "权限ID",
+                        "type": "integer"
+                      },
+                      "name": {
+                        "description": "权限名称",
+                        "type": "string"
+                      },
+                      "resource": {
+                        "description": "资源路径",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "状态",
+                        "type": "integer"
+                      },
+                      "type": {
+                        "description": "类型",
+                        "type": "integer"
+                      },
+                      "updateTime": {
+                        "description": "更新时间",
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "description": "总数",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建权限",
+        "operationId": "permissionsCreatePermission",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "code",
+                "type",
+                "resource",
+                "action",
+                "description"
+              ],
+              "properties": {
+                "action": {
+                  "description": "动作方法 (GET, POST...)",
+                  "type": "string"
+                },
+                "code": {
+                  "description": "权限代码",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "权限名称",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "资源路径",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "类型：1菜单，2按钮，3API",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "description": "动作方法",
+                  "type": "string"
+                },
+                "code": {
+                  "description": "权限代码",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "权限ID",
+                  "type": "integer"
+                },
+                "name": {
+                  "description": "权限名称",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "资源路径",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "type": {
+                  "description": "类型",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/permissions/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取权限信息",
+        "operationId": "permissionsGetPermission",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "description": "动作方法",
+                  "type": "string"
+                },
+                "code": {
+                  "description": "权限代码",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "权限ID",
+                  "type": "integer"
+                },
+                "name": {
+                  "description": "权限名称",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "资源路径",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "type": {
+                  "description": "类型",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "更新权限信息",
+        "operationId": "permissionsUpdatePermission",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "权限ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "status",
+                "resource",
+                "action",
+                "type"
+              ],
+              "properties": {
+                "action": {
+                  "description": "动作方法",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "权限名称",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "资源路径",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "type": {
+                  "description": "类型",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "description": "动作方法",
+                  "type": "string"
+                },
+                "code": {
+                  "description": "权限代码",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "权限ID",
+                  "type": "integer"
+                },
+                "name": {
+                  "description": "权限名称",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "资源路径",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "type": {
+                  "description": "类型",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除权限",
+        "operationId": "permissionsDeletePermission",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/usercenter/v1/rbac/check": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "检查用户权限",
+        "operationId": "rbacCheckPermission",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "resource",
+                "action"
+              ],
+              "properties": {
+                "action": {
+                  "description": "动作",
+                  "type": "string"
+                },
+                "resource": {
+                  "description": "资源",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "allowed": {
+                  "description": "是否允许",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/roles": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取角色列表",
+        "operationId": "rolesListRoles",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "description": "角色列表",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "code",
+                      "description",
+                      "status",
+                      "createTime",
+                      "updateTime"
+                    ],
+                    "properties": {
+                      "code": {
+                        "description": "角色代码",
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "description": "创建时间",
+                        "type": "integer"
+                      },
+                      "description": {
+                        "description": "描述",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "角色ID",
+                        "type": "integer"
+                      },
+                      "name": {
+                        "description": "角色名称",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "状态",
+                        "type": "integer"
+                      },
+                      "updateTime": {
+                        "description": "更新时间",
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "description": "总数",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建角色",
+        "operationId": "rolesCreateRole",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "code",
+                "description"
+              ],
+              "properties": {
+                "code": {
+                  "description": "角色代码",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "角色名称",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "角色代码",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "角色ID",
+                  "type": "integer"
+                },
+                "name": {
+                  "description": "角色名称",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/roles/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取角色信息",
+        "operationId": "rolesGetRole",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "角色代码",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "角色ID",
+                  "type": "integer"
+                },
+                "name": {
+                  "description": "角色名称",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "更新角色信息",
+        "operationId": "rolesUpdateRole",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "角色ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "status"
+              ],
+              "properties": {
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "角色名称",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "description": "角色代码",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "description": {
+                  "description": "描述",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "角色ID",
+                  "type": "integer"
+                },
+                "name": {
+                  "description": "角色名称",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除角色",
+        "operationId": "rolesDeleteRole",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/usercenter/v1/roles/{id}/permissions": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取角色的权限列表",
+        "operationId": "rolesListRolePermissions",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "description": "权限列表",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "code",
+                      "type",
+                      "resource",
+                      "action",
+                      "description",
+                      "status",
+                      "createTime",
+                      "updateTime"
+                    ],
+                    "properties": {
+                      "action": {
+                        "description": "动作方法",
+                        "type": "string"
+                      },
+                      "code": {
+                        "description": "权限代码",
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "description": "创建时间",
+                        "type": "integer"
+                      },
+                      "description": {
+                        "description": "描述",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "权限ID",
+                        "type": "integer"
+                      },
+                      "name": {
+                        "description": "权限名称",
+                        "type": "string"
+                      },
+                      "resource": {
+                        "description": "资源路径",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "状态",
+                        "type": "integer"
+                      },
+                      "type": {
+                        "description": "类型",
+                        "type": "integer"
+                      },
+                      "updateTime": {
+                        "description": "更新时间",
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "description": "总数",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "给角色分配权限",
+        "operationId": "rolesGrantPermissionToRole",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "permissionIds"
+              ],
+              "properties": {
+                "permissionIds": {
+                  "description": "权限ID列表",
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "移除角色的权限",
+        "operationId": "rolesRevokePermissionFromRole",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "permissionIds"
+              ],
+              "properties": {
+                "permissionIds": {
+                  "description": "权限ID列表",
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/usercenter/v1/users": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取用户列表",
+        "operationId": "usersListUsers",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "description": "用户列表",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "username",
+                      "email",
+                      "phone",
+                      "avatar",
+                      "status",
+                      "createTime",
+                      "updateTime",
+                      "lastLoginTime"
+                    ],
+                    "properties": {
+                      "avatar": {
+                        "description": "头像地址",
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "description": "创建时间",
+                        "type": "integer"
+                      },
+                      "email": {
+                        "description": "邮箱",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "用户ID",
+                        "type": "integer"
+                      },
+                      "lastLoginTime": {
+                        "description": "最后登录时间",
+                        "type": "integer"
+                      },
+                      "phone": {
+                        "description": "手机号",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "状态",
+                        "type": "integer"
+                      },
+                      "updateTime": {
+                        "description": "更新时间",
+                        "type": "integer"
+                      },
+                      "username": {
+                        "description": "用户名",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "description": "总数",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建用户",
+        "operationId": "usersCreateUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "password",
+                "email",
+                "phone",
+                "avatar"
+              ],
+              "properties": {
+                "avatar": {
+                  "description": "头像地址",
+                  "type": "string"
+                },
+                "email": {
+                  "description": "邮箱",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "密码",
+                  "type": "string"
+                },
+                "phone": {
+                  "description": "手机号",
+                  "type": "string"
+                },
+                "username": {
+                  "description": "用户名",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "avatar": {
+                  "description": "头像地址",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "email": {
+                  "description": "邮箱",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "用户ID",
+                  "type": "integer"
+                },
+                "lastLoginTime": {
+                  "description": "最后登录时间",
+                  "type": "integer"
+                },
+                "phone": {
+                  "description": "手机号",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                },
+                "username": {
+                  "description": "用户名",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usercenter/v1/users/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取用户信息",
+        "operationId": "usersGetUser",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "avatar": {
+                  "description": "头像地址",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "email": {
+                  "description": "邮箱",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "用户ID",
+                  "type": "integer"
+                },
+                "lastLoginTime": {
+                  "description": "最后登录时间",
+                  "type": "integer"
+                },
+                "phone": {
+                  "description": "手机号",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                },
+                "username": {
+                  "description": "用户名",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "更新用户信息",
+        "operationId": "usersUpdateUser",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "用户ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "phone",
+                "avatar",
+                "status"
+              ],
+              "properties": {
+                "avatar": {
+                  "description": "头像地址",
+                  "type": "string"
+                },
+                "email": {
+                  "description": "邮箱",
+                  "type": "string"
+                },
+                "phone": {
+                  "description": "手机号",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态：1正常，0禁用",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "avatar": {
+                  "description": "头像地址",
+                  "type": "string"
+                },
+                "createTime": {
+                  "description": "创建时间",
+                  "type": "integer"
+                },
+                "email": {
+                  "description": "邮箱",
+                  "type": "string"
+                },
+                "id": {
+                  "description": "用户ID",
+                  "type": "integer"
+                },
+                "lastLoginTime": {
+                  "description": "最后登录时间",
+                  "type": "integer"
+                },
+                "phone": {
+                  "description": "手机号",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "updateTime": {
+                  "description": "更新时间",
+                  "type": "integer"
+                },
+                "username": {
+                  "description": "用户名",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除用户",
+        "operationId": "usersDeleteUser",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/usercenter/v1/users/{id}/roles": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取用户的角色列表",
+        "operationId": "usersListUserRoles",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "list": {
+                  "description": "角色列表",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "code",
+                      "description",
+                      "status",
+                      "createTime",
+                      "updateTime"
+                    ],
+                    "properties": {
+                      "code": {
+                        "description": "角色代码",
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "description": "创建时间",
+                        "type": "integer"
+                      },
+                      "description": {
+                        "description": "描述",
+                        "type": "string"
+                      },
+                      "id": {
+                        "description": "角色ID",
+                        "type": "integer"
+                      },
+                      "name": {
+                        "description": "角色名称",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description": "状态",
+                        "type": "integer"
+                      },
+                      "updateTime": {
+                        "description": "更新时间",
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "description": "总数",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "分配角色给用户",
+        "operationId": "usersAssignRoleToUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "roleIds"
+              ],
+              "properties": {
+                "roleIds": {
+                  "description": "角色ID列表",
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "移除用户的角色",
+        "operationId": "usersRevokeRoleFromUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "roleIds"
+              ],
+              "properties": {
+                "roleIds": {
+                  "description": "角色ID列表",
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    }
+  },
+  "x-date": "2025-12-31 10:13:45",
+  "x-description": "This is a goctl generated swagger file.",
+  "x-github": "https://github.com/zeromicro/go-zero",
+  "x-go-zero-doc": "https://go-zero.dev/",
+  "x-goctl-version": "1.9.2"
+}

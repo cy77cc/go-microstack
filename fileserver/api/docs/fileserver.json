@@ -1,0 +1,508 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "文件服务 API",
+    "version": "1.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/fileserver/v1/buckets": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建存储桶",
+        "operationId": "bucketsCreateBucket",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "bucket",
+                "storageType"
+              ],
+              "properties": {
+                "bucket": {
+                  "description": "Bucket名称",
+                  "type": "string"
+                },
+                "storageType": {
+                  "description": "存储类型",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bucket": {
+                  "description": "Bucket名称",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fileserver/v1/files": {
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "单文件上传",
+        "operationId": "filesUploadFile",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "存储桶名称",
+            "name": "bucket",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "文件路径/名称",
+            "name": "key",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "文件Hash",
+            "name": "hash",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "文件大小",
+            "name": "size",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "MIME类型",
+            "name": "contentType",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bucket": {
+                  "description": "存储桶",
+                  "type": "string"
+                },
+                "eTag": {
+                  "description": "ETag",
+                  "type": "string"
+                },
+                "fileId": {
+                  "description": "文件ID",
+                  "type": "string"
+                },
+                "key": {
+                  "description": "文件路径",
+                  "type": "string"
+                },
+                "size": {
+                  "description": "大小",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fileserver/v1/files/{fileId}/meta": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取文件元数据",
+        "operationId": "filesGetFileMeta",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bucket": {
+                  "description": "存储桶",
+                  "type": "string"
+                },
+                "contentType": {
+                  "description": "MIME类型",
+                  "type": "string"
+                },
+                "fileId": {
+                  "description": "文件ID",
+                  "type": "string"
+                },
+                "fileName": {
+                  "description": "文件名",
+                  "type": "string"
+                },
+                "hash": {
+                  "description": "Hash值",
+                  "type": "string"
+                },
+                "key": {
+                  "description": "路径",
+                  "type": "string"
+                },
+                "size": {
+                  "description": "大小",
+                  "type": "integer"
+                },
+                "status": {
+                  "description": "状态",
+                  "type": "integer"
+                },
+                "uploadTime": {
+                  "description": "上传时间",
+                  "type": "integer"
+                },
+                "uploader": {
+                  "description": "上传者ID",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fileserver/v1/files/{fileId}/url": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取文件下载链接",
+        "operationId": "filesGetDownloadUrl",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "expire": {
+                  "description": "过期时间戳",
+                  "type": "integer"
+                },
+                "url": {
+                  "description": "访问URL",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fileserver/v1/uploads": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "初始化分片上传",
+        "operationId": "uploadsInitiateMultipartUpload",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "bucket",
+                "key",
+                "hash",
+                "size",
+                "contentType"
+              ],
+              "properties": {
+                "bucket": {
+                  "description": "存储桶",
+                  "type": "string"
+                },
+                "contentType": {
+                  "description": "MIME类型",
+                  "type": "string"
+                },
+                "hash": {
+                  "description": "文件Hash",
+                  "type": "string"
+                },
+                "key": {
+                  "description": "文件路径",
+                  "type": "string"
+                },
+                "size": {
+                  "description": "总大小",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "uploadId": {
+                  "description": "分片上传ID",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fileserver/v1/uploads/{uploadId}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "终止分片上传",
+        "operationId": "uploadsAbortMultipartUpload",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "分片上传ID",
+            "name": "uploadId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/fileserver/v1/uploads/{uploadId}/complete": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "完成分片上传",
+        "operationId": "uploadsCompleteMultipartUpload",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "分片上传ID",
+            "name": "uploadId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "parts"
+              ],
+              "properties": {
+                "parts": {
+                  "description": "所有分片信息",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "partNumber",
+                      "eTag"
+                    ],
+                    "properties": {
+                      "eTag": {
+                        "description": "ETag",
+                        "type": "string"
+                      },
+                      "partNumber": {
+                        "description": "分片序号",
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bucket": {
+                  "description": "存储桶",
+                  "type": "string"
+                },
+                "fileId": {
+                  "description": "文件ID",
+                  "type": "string"
+                },
+                "key": {
+                  "description": "文件路径",
+                  "type": "string"
+                },
+                "size": {
+                  "description": "最终大小",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fileserver/v1/uploads/{uploadId}/parts/{partNumber}": {
+      "put": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "上传分片",
+        "operationId": "uploadsUploadPart",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "分片上传ID",
+            "name": "uploadId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "分片序号",
+            "name": "partNumber",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "eTag": {
+                  "description": "分片ETag",
+                  "type": "string"
+                },
+                "partNumber": {
+                  "description": "分片序号",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "健康检查",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "状态",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-date": "2025-12-31 10:24:33",
+  "x-description": "This is a goctl generated swagger file.",
+  "x-github": "https://github.com/zeromicro/go-zero",
+  "x-go-zero-doc": "https://go-zero.dev/",
+  "x-goctl-version": "1.9.2"
+}
