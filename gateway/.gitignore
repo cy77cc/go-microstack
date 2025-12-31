@@ -29,8 +29,6 @@ go.work.sum
 # env file
 .env
 
-etc/config.yaml
-
 #.idea/
 log/
 
