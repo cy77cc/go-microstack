@@ -2,29 +2,37 @@ Name: usercenter.rpc
 ListenOn: 0.0.0.0:40012
 
 register:
-  type: etcd # 可选: nacos, consul, etcd, zookeeper
+  type: nacos # 可选: nacos, consul, etcd, zookeeper
   endpoints:
     - 127.0.0.1:2379
-  namespace: public
-  username: 
-  password: 
+    - ${NACOS_ADDR}
+  namespace: ${NACOS_NAMESPACE}
+  username: ${NACOS_USERNAME}
+  password: ${NACOS_PASSWORD}
   timeout: 5000
 
-JwtAuth:
-  AccessSecret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  AccessExpire: 86400
-
-Salt: test
-
-Mysql:
-  DataSource: root:root@tcp(127.0.0.1:3306)/usercenter?parseTime=true
-  MaxIdleConns: 10
-  MaxOpenConns: 100
-  Timeout: 10s
-  ReadTimeout: 10s
-  WriteTimeout: 10s
+Redis:
+  Host: ${REDIS_HOST}:${REDIS_PORT}
+  Type: node
+  Pass: ${REDIS_PASSWORD}
+  Key: fileserver:rpc
 
 CacheRedis:
-  - Host: 192.168.66.150:6379
+  - Host: ${REDIS_HOST}:${REDIS_PORT}
     Type: node
-    Pass: 1qaz@2wsX
+    Pass: ${REDIS_PASSWORD}
+
+Mysql:
+  host: ${MYSQL_HOST}
+  port: ${MYSQL_PORT}
+  database: usercenter
+  username: ${MYSQL_USERNAME}
+  password: ${MYSQL_PASSWORD}
+
+JwtAuth:
+  AccessSecret: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+  AccessExpire: 10080
+
+Salt: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+Auth: false
+StrictControl: true

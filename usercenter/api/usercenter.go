@@ -16,7 +16,6 @@ import (
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
-	"gopkg.in/yaml.v2"
 )
 
 var configFile = flag.String("f", "etc/usercenter.yaml", "the config file")
@@ -25,7 +24,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	conf.MustLoad(*configFile, &c, conf.UseEnv())
 
 	if c.Register.Type != "" {
 		reg, err := register.NewRegister(context.Background(), c.Register.Type,
@@ -36,13 +35,13 @@ func main() {
 		)
 		if err == nil {
 			// 1. Load config
-			if item, err := reg.GetConfig(context.Background(), c.Name, "DEFAULT_GROUP"); err == nil {
-				if err := yaml.Unmarshal([]byte(item.Value), &c); err != nil {
-					fmt.Printf("Failed to unmarshal remote config: %v\n", err)
-				} else {
-					fmt.Println("Loaded config from register center")
-				}
-			}
+			// if item, err := reg.GetConfig(context.Background(), c.Name, "DEFAULT_GROUP"); err == nil {
+			// 	if err := yaml.Unmarshal([]byte(item.Value), &c); err != nil {
+			// 		fmt.Printf("Failed to unmarshal remote config: %v\n", err)
+			// 	} else {
+			// 		fmt.Println("Loaded config from register center")
+			// 	}
+			// }
 
 			// 2. Discover RPC services (Manual discovery and injection)
 			// This allows us to use any registry supported by our package

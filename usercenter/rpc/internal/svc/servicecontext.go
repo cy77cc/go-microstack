@@ -1,6 +1,8 @@
 package svc
 
 import (
+	"fmt"
+
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/config"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -19,11 +21,13 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	conn := sqlx.NewMysql(c.Mysql.DataSource)
-	var rdb *redis.Redis
-	if c.CacheRedis != nil {
-		rdb = redis.MustNewRedis(c.CacheRedis[0].RedisConf)
-	}
+	conn := sqlx.NewMysql(fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=true&loc=Local&timeout=10s",
+		c.Mysql.Username, c.Mysql.Password, c.Mysql.Host, c.Mysql.Port, c.Mysql.Database))
+
+	c.Mysql.Endpoint = fmt.Sprintf("%s:%d", c.Mysql.Host, c.Mysql.Port)
+
+	rdb := redis.MustNewRedis(c.Redis.RedisConf)
+	
 	return &ServiceContext{
 		Config:                 c,
 		UsersModel:             model.NewUsersModel(conn, c.CacheRedis),

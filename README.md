@@ -1,59 +1,53 @@
-## 项目结构
+# Go Microstack
 
-```shell
-├───app # 服务目录
-│   └───fileserver
-│       ├───api
-│       ├───model
-│       └───rpc
-├───common  # 公共模块
-└───deploy  # 部署
-    ├───compose  # compose 部署
-    └───k8s      # k8s 部署
-```
+## 项目简介
+Go Microstack 是一个基于 [Go Zero](https://go-zero.dev/) 微服务框架构建的后端系统。它旨在提供一套标准、高效、可扩展的微服务基础组件，包含用户中心、文件服务等核心模块。
 
-## 中间件部署
+## 模块列表
 
-### mysql
+| 模块名称 | 目录 | 描述 |
+| :--- | :--- | :--- |
+| **User Center** | [usercenter](./usercenter) | 用户管理、认证鉴权 (JWT)、RBAC 权限控制 |
+| **File Server** | [fileserver](./fileserver) | 文件上传下载、分片上传、对接 MinIO |
 
-k8s 集群部署方式，mysql 采用一主两从的方式部署，主节点向外暴露3306端口，从节点只读向外暴露3307端口。因此可以采用读写分离的模式，访问3306端口写，3307端口读。
+## 技术栈
 
-#### 技术细节
+*   **Golang**: 核心开发语言
+*   **Go Zero**: 微服务框架 (RPC, API, Model)
+*   **gRPC / Protobuf**: 服务间通信
+*   **MySQL**: 关系型数据库
+*   **Redis**: 缓存与会话管理
+*   **Etcd**: 服务注册与发现
+*   **MinIO**: 对象存储服务
 
-mysql 清单，master_init.sh、slave_init.sh 脚本用于主节点的初始化，放在 /docker-entrypoint-initdb.d/ 目录下面，mysql 容器的
-entrypoint 脚本执行完之后会执行这里面的脚本，而且容器只会在第一次初始化的时候执行。
+## 快速开始
 
-### redis
+### 环境准备
+1.  安装 Go 1.18+
+2.  安装 `goctl` 工具: `go install github.com/zeromicro/go-zero/tools/goctl@latest`
+3.  准备依赖服务: MySQL, Redis, Etcd, MinIO (推荐使用 Docker Compose 部署)
 
-redis 采用一主两从，三哨兵的方式部署，使用的时候通过哨兵的地址连接。通过 ip:16379 端口连接哨兵，哨兵会返回当前主节点的地址。
+### 部署流程
 
-#### 技术细节
+1.  **初始化数据库**
+    *   执行 `usercenter/model/*.sql`
+    *   执行 `fileserver/model/*.sql`
 
-在这里有个细节就是，redis 三个 pod 用 30040、30041、30042 三个不同的端口向外暴露服务，这样做的好处是避免 NodePort
-负载均衡机制将哨兵返回的主节点地址负载到从节点上。
+2.  **启动 User Center**
+    *   进入 `usercenter/rpc` 修改配置并启动 `go run usercenter.go`
+    *   进入 `usercenter/api` 修改配置并启动 `go run usercenter.go`
 
-### minio
+3.  **启动 File Server**
+    *   进入 `fileserver/rpc` 修改配置并启动 `go run fileserver.go`
+    *   进入 `fileserver/api` 修改配置并启动 `go run fileserver.go`
 
-### kafka
+## 开发规范
 
-## 端口规划
+*   **API 定义**: 使用 `.api` 文件定义 HTTP 接口，通过 `goctl api go` 生成代码。
+*   **RPC 定义**: 使用 `.proto` 文件定义 RPC 接口，通过 `goctl rpc protoc` 生成代码。
+*   **错误处理**: 统一使用 `xerr` 包（需自定义）或标准错误码返回。
+*   **文档**: 每个模块维护自己的 README，API 文档由 Swagger 自动生成（需配置）。
 
-| 服务   | api端口    |  rpc端口 |
-|------|-------|
-| 网关服务 | 41000 | 40010 |
-| 文件服务 | 41001 | 40011 |
-| 用户服务 | 41002 | 40012 |
-
-## 文件服务
-
-文件服务提供文件上传、下载、删除、文件列表功能，文件上传、下载、删除功能都使用 multipart/form-data 方式上传，文件列表功能返回文件列表。
-
-### 技术方案
-
-1. 前端实现分片上传功能，
-    1. 前端上传前先请求获取uploadID，上传文件的hash和大小，文件类型，文件名，分片数量等等信息
-    2. 后端调用rpc服务，请求minio生成uploadID
-    3. 前端开始对文件进行分片，并且上传分片，后端api通过rpc流进行文件传输，rpc服务将文件上传minio
-    4. 所有分片上传之后看需不需要计算一下hash值，需要对比大小和hash值，如果两个对不上，说明文件损坏了
-2. 断点续传以及秒传实现
-    1. 断点续传的原理是将已经上传的分片etag保存到某个地方，跳过已经上传的，秒传的原理差不多
+## 联系方式
+*   Author: zhangdongping
+*   Support: keson.an

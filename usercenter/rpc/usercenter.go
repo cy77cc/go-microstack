@@ -24,7 +24,6 @@ import (
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"gopkg.in/yaml.v2"
 )
 
 var configFile = flag.String("f", "etc/usercenter.yaml", "the config file")
@@ -33,7 +32,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	conf.MustLoad(*configFile, &c, conf.UseEnv())
 
 	// Register to Nacos/Etcd/Consul if configured
 	if c.Register.Type != "" {
@@ -45,15 +44,15 @@ func main() {
 		)
 		if err == nil {
 			// 1. Load remote config
-			if item, err := reg.GetConfig(context.Background(), c.Name, "DEFAULT_GROUP"); err == nil {
-				if err := yaml.Unmarshal([]byte(item.Value), &c); err != nil {
-					fmt.Printf("Failed to unmarshal remote config: %v\n", err)
-				} else {
-					fmt.Println("Loaded config from register center")
-				}
-			} else {
-				fmt.Printf("Failed to get config from register center: %v\n", err)
-			}
+			// if item, err := reg.GetConfig(context.Background(), c.Name, "DEFAULT_GROUP"); err == nil {
+			// 	if err := yaml.Unmarshal([]byte(item.Value), &c); err != nil {
+			// 		fmt.Printf("Failed to unmarshal remote config: %v\n", err)
+			// 	} else {
+			// 		fmt.Println("Loaded config from register center")
+			// 	}
+			// } else {
+			// 	fmt.Printf("Failed to get config from register center: %v\n", err)
+			// }
 
 			// 2. Register service (Async)
 			go func() {

@@ -25,7 +25,7 @@ CacheRedis:
 Mysql:
   host: ${MYSQL_HOST}
   port: ${MYSQL_PORT}
-  database: usercenter
+  database: fileserver
   username: ${MYSQL_USERNAME}
   password: ${MYSQL_PASSWORD}
 

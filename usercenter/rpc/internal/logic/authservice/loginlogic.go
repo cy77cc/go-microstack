@@ -43,7 +43,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 
 	// 2. Check password
 	password := cryptx.PasswordEncrypt(l.svcCtx.Config.Salt, in.Password)
-	if cryptx.PasswordEncrypt(l.svcCtx.Config.Salt, password) != user.PasswordHash {
+	if password != user.PasswordHash {
 		return nil, status.Error(codes.Unauthenticated, "invalid username or password")
 	}
 

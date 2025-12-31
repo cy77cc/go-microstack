@@ -43,5 +43,31 @@
             "envFile": "${workspaceFolder}/.env",
             "asRoot": true,
         },
+        {
+            "name": "usercenter-api",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/usercenter/api/.",
+            "args": [
+                "-f",
+                "${workspaceFolder}/usercenter/api/etc/usercenter.yaml"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "asRoot": true,
+        },
+        {
+            "name": "usercenter-rpc",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/usercenter/rpc/.",
+            "args": [
+                "-f",
+                "${workspaceFolder}/usercenter/rpc/etc/usercenter.yaml"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "asRoot": true,
+        },
     ]
 }

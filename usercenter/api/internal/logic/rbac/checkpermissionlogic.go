@@ -26,9 +26,11 @@ func NewCheckPermissionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 }
 
 func (l *CheckPermissionLogic) CheckPermission(req *types.CheckPermissionReq) (resp *types.CheckPermissionResp, err error) {
+	// 从 context 中获取 JWT 解析出来的 userId
 	userId := l.ctx.Value("userId")
 	var uid uint64
 	if userId != nil {
+		// 根据 userId 的实际类型进行断言转换
 		switch v := userId.(type) {
 		case uint64:
 			uid = v
@@ -43,6 +45,7 @@ func (l *CheckPermissionLogic) CheckPermission(req *types.CheckPermissionReq) (r
 		}
 	}
 
+	// 调用 RPC 服务检查权限
 	res, err := l.svcCtx.PermissionService.CheckPermission(l.ctx, &permissionservice.CheckPermissionReq{
 		Uid:      uid,
 		Resource: req.Resource,

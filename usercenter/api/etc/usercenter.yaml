@@ -3,20 +3,27 @@ Host: 0.0.0.0
 Port: 41002
 
 register:
-  type: etcd # 可选: nacos, consul, etcd, zookeeper
+  type: nacos # 可选: nacos, consul, etcd, zookeeper
   endpoints:
     - 127.0.0.1:2379
-  namespace: public
-  username: 
-  password: 
+    - ${NACOS_ADDR}
+  namespace: ${NACOS_NAMESPACE}
+  username: ${NACOS_USERNAME}
+  password: ${NACOS_PASSWORD}
   timeout: 5000
 
 Auth:
-  AccessSecret: xxxxxxxx
-  AccessExpire: 86400
+  AccessSecret: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+  AccessExpire: 10080
+
+Sign:
+  Secret: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+  SkewSec: 300
 
 UserCenterRpc:
   Etcd:
     Hosts:
       - 127.0.0.1:2379
     Key: usercenter.rpc
+
+

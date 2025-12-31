@@ -24,7 +24,12 @@ func NewUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upload
 }
 
 func (l *UploadFileLogic) UploadFile(req *types.UploadFileReq) (resp *types.UploadFileResp, err error) {
-	// todo: add your logic here and delete this line
+	// TODO: 实现单文件上传逻辑
+	// 1. 读取 HTTP 请求中的文件内容 (MultipartForm)
+	// 2. 将文件内容读取为 []byte
+	// 3. 调用 RPC 服务的 Upload 接口
+	//    res, err := l.svcCtx.FileService.Upload(l.ctx, &fileservice.UploadReq{ ... })
+	// 4. 返回 RPC 响应结果
 
 	return
 }
