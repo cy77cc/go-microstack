@@ -15,6 +15,8 @@ services:
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     ports:
       - "41012:41012"
+    networks:
+      net: null
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "echo > /dev/tcp/127.0.0.1/40012"]
@@ -35,6 +37,8 @@ services:
       SIGN_SKEW: "300"
     ports:
       - "41002:41002"
+    networks:
+      net: null
     depends_on:
       - usercenter-rpc
     restart: unless-stopped

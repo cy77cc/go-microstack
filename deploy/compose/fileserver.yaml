@@ -11,7 +11,7 @@ services:
       - "41011:41011"
     restart: unless-stopped
     networks:
-      net:
+      net: null
     healthcheck:
       test: ["CMD", "echo > /dev/tcp/127.0.0.1/41011"]
       interval: 10s
@@ -32,7 +32,7 @@ services:
       - fileserver-rpc
     restart: unless-stopped
     networks:
-      net:
+      net: null
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:41001/health"]
       interval: 10s

@@ -11,7 +11,7 @@ services:
       - "41000:41000"
     restart: unless-stopped
     networks:
-      net:
+      net: null
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://127.0.0.1:41000/health" ]
       interval: 10s
