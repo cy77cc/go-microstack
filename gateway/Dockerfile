@@ -23,4 +23,4 @@ COPY gateway/etc ./etc
 
 EXPOSE 41000
 
-CMD ["./main", "-config", "etc/conifg.yaml"]
+CMD ["./main", "-config", "etc/config.yaml"]
