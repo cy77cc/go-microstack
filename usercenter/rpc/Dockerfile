@@ -7,6 +7,8 @@ WORKDIR /app
 
 COPY . .
 
+WORKDIR /app/usercenter
+
 RUN go mod tidy
 
 RUN go build -ldflags="-s -w" -o /app/usercenter-rpc ./rpc/usercenter.go
@@ -16,6 +18,6 @@ COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/S
 ENV TZ=Asia/Shanghai
 WORKDIR /app
 COPY --from=builder /app/usercenter-rpc /app/usercenter-rpc
-COPY rpc/etc /app/etc
+COPY usercenter/rpc/etc /app/etc
 EXPOSE 40011
 CMD ["./usercenter-rpc", "-f", "etc/usercenter.yaml"]
