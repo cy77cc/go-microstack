@@ -1,0 +1,19 @@
+{
+  "routes": [
+    {
+      "path_prefix": "/api/file",
+      "service": "file-service",
+      "strip_prefix": "/api/file",
+      "rate_limit": {
+        "burst": 100,
+        "qps": 50
+      },
+      "circuit": {
+        "min_request": 10,
+        "error_rate": 0.5,
+        "open_seconds": 30,
+        "half_open_success": 3
+      }
+    }
+  ]
+}

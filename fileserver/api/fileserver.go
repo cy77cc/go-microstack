@@ -1,0 +1,93 @@
+package main
+
+import (
+	"context"
+	"flag"
+	"fmt"
+	"strconv"
+	"time"
+
+	"github.com/cy77cc/go-microstack/common/logx"
+	"github.com/cy77cc/go-microstack/common/register"
+	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/utils"
+	"github.com/cy77cc/go-microstack/fileserver/api/internal/config"
+	"github.com/cy77cc/go-microstack/fileserver/api/internal/handler"
+	"github.com/cy77cc/go-microstack/fileserver/api/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/rest"
+)
+
+var configFile = flag.String("f", "etc/fileserver.yaml", "the config file")
+
+func main() {
+	flag.Parse()
+
+	var c config.Config
+	conf.MustLoad(*configFile, &c, conf.UseEnv())
+
+	if c.Register.Type != "" {
+		reg, err := register.NewRegister(context.Background(), c.Register.Type,
+			register.WithEndpoints(c.Register.Endpoints...),
+			register.WithAuth(c.Register.Username, c.Register.Password),
+			register.WithNamespace(c.Register.Namespace),
+			register.WithTimeout(time.Duration(c.Register.Timeout)*time.Millisecond),
+		)
+		if err == nil {
+			// 1. Load config
+			// if item, err := reg.GetConfig(context.Background(), c.Name, "DEFAULT_GROUP"); err == nil {
+			// 	if err := yaml.Unmarshal([]byte(item.Value), &c); err != nil {
+			// 		fmt.Printf("Failed to unmarshal remote config: %v\n", err)
+			// 	} else {
+			// 		fmt.Println("Loaded config from register center")
+			// 	}
+			// }
+
+			// 2. Discover RPC services (Manual discovery and injection)
+			if len(c.FileRpc.Endpoints) == 0 {
+				insts, err := reg.GetService(context.Background(), "fileserver.rpc", "DEFAULT_GROUP")
+				if err == nil && len(insts) > 0 {
+					var endpoints []string
+					for _, inst := range insts {
+						endpoints = append(endpoints, fmt.Sprintf("%s:%d", inst.Host, inst.Port))
+					}
+					c.FileRpc.Endpoints = endpoints
+					logx.Infof("Discovered fileserver.rpc endpoints: %v\n", endpoints)
+				}
+			}
+
+			// 3. Register API service (Async)
+			go func() {
+				time.Sleep(3 * time.Second)
+				port := c.Port
+				ip := utils.GetMachineIP()
+
+				inst := &types.ServiceInstance{
+					ID:          fmt.Sprintf("%s-%s-%d", c.Name, ip, port),
+					ServiceName: c.Name,
+					Host:        ip,
+					Port:        port,
+					GroupName:   "DEFAULT_GROUP",
+					ClusterName: "DEFAULT",
+					Weight:      10,
+					Metadata:    map[string]string{"http_port": strconv.Itoa(port)},
+				}
+				if err := reg.Register(context.Background(), inst); err != nil {
+					logx.Errorf("Failed to register service: %v\n", err)
+				} else {
+					logx.Infof("Registered service %s to %s\n", c.Name, c.Register.Type)
+				}
+			}()
+		}
+	}
+
+	server := rest.MustNewServer(c.RestConf)
+	defer server.Stop()
+
+	ctx := svc.NewServiceContext(c)
+	handler.RegisterHandlers(server, ctx)
+
+	logx.Infof("Starting server at %s:%d...\n", c.Host, c.Port)
+	server.Start()
+}

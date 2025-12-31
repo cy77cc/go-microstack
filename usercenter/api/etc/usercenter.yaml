@@ -1,0 +1,22 @@
+Name: usercenter
+Host: 0.0.0.0
+Port: 41002
+
+register:
+  type: etcd # 可选: nacos, consul, etcd, zookeeper
+  endpoints:
+    - 127.0.0.1:2379
+  namespace: public
+  username: 
+  password: 
+  timeout: 5000
+
+Auth:
+  AccessSecret: xxxxxxxx
+  AccessExpire: 86400
+
+UserCenterRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: usercenter.rpc

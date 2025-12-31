@@ -1,0 +1,269 @@
+syntax = "v1"
+
+info (
+	title:   "用户中心 API"
+	desc:    "用户管理、RBAC 权限、鉴权认证"
+	author:  "usercenter"
+	version: "1.0"
+)
+
+type (
+	LoginReq {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	TokenResp {
+		AccessToken  string   `json:"accessToken"`
+		RefreshToken string   `json:"refreshToken"`
+		Expires      int64    `json:"expires"`
+		Uid          uint64   `json:"uid"`
+		Roles        []string `json:"roles"`
+	}
+	RefreshReq {
+		RefreshToken string `json:"refreshToken"`
+	}
+	LogoutReq {
+		RefreshToken string `json:"refreshToken"`
+	}
+	UserCreateReq {
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Email    string `json:"email"`
+		Phone    string `json:"phone"`
+		Avatar   string `json:"avatar"`
+	}
+	UserUpdateReq {
+		Id     uint64 `path:"id"`
+		Email  string `json:"email"`
+		Phone  string `json:"phone"`
+		Avatar string `json:"avatar"`
+		Status int32  `json:"status"`
+	}
+	UserResp {
+		Id            uint64 `json:"id"`
+		Username      string `json:"username"`
+		Email         string `json:"email"`
+		Phone         string `json:"phone"`
+		Avatar        string `json:"avatar"`
+		Status        int32  `json:"status"`
+		CreateTime    int64  `json:"createTime"`
+		UpdateTime    int64  `json:"updateTime"`
+		LastLoginTime int64  `json:"lastLoginTime"`
+	}
+	UserListReq {
+		Page     int32  `query:"page"`
+		PageSize int32  `query:"pageSize"`
+		Query    string `query:"query"`
+	}
+	UserListResp {
+		Total int64      `json:"total"`
+		List  []UserResp `json:"list"`
+	}
+	RoleCreateReq {
+		Name        string `json:"name"`
+		Code        string `json:"code"`
+		Description string `json:"description"`
+	}
+	RoleUpdateReq {
+		Id          uint64 `path:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Status      int32  `json:"status"`
+	}
+	RoleResp {
+		Id          uint64 `json:"id"`
+		Name        string `json:"name"`
+		Code        string `json:"code"`
+		Description string `json:"description"`
+		Status      int32  `json:"status"`
+		CreateTime  int64  `json:"createTime"`
+		UpdateTime  int64  `json:"updateTime"`
+	}
+	RoleListReq {
+		Page     int32 `query:"page"`
+		PageSize int32 `query:"pageSize"`
+	}
+	RoleListResp {
+		Total int64      `json:"total"`
+		List  []RoleResp `json:"list"`
+	}
+	PermissionCreateReq {
+		Name        string `json:"name"`
+		Code        string `json:"code"`
+		Type        int32  `json:"type"`
+		Resource    string `json:"resource"`
+		Action      string `json:"action"`
+		Description string `json:"description"`
+	}
+	PermissionUpdateReq {
+		Id          uint64 `path:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Status      int32  `json:"status"`
+		Resource    string `json:"resource"`
+		Action      string `json:"action"`
+		Type        int32  `json:"type"`
+	}
+	PermissionResp {
+		Id          uint64 `json:"id"`
+		Name        string `json:"name"`
+		Code        string `json:"code"`
+		Type        int32  `json:"type"`
+		Resource    string `json:"resource"`
+		Action      string `json:"action"`
+		Description string `json:"description"`
+		Status      int32  `json:"status"`
+		CreateTime  int64  `json:"createTime"`
+		UpdateTime  int64  `json:"updateTime"`
+	}
+	PermissionListReq {
+		Page     int32 `query:"page"`
+		PageSize int32 `query:"pageSize"`
+	}
+	PermissionListResp {
+		Total int64            `json:"total"`
+		List  []PermissionResp `json:"list"`
+	}
+	AssignRoleBody {
+		RoleIds []uint64 `json:"roleIds"`
+	}
+	RevokeRoleBody {
+		RoleIds []uint64 `json:"roleIds"`
+	}
+	GrantPermissionBody {
+		PermissionIds []uint64 `json:"permissionIds"`
+	}
+	RevokePermissionBody {
+		PermissionIds []uint64 `json:"permissionIds"`
+	}
+	CheckPermissionReq {
+		Resource string `json:"resource"`
+		Action   string `json:"action"`
+	}
+	CheckPermissionResp {
+		Allowed bool `json:"allowed"`
+	}
+	GetHealthResp {
+		Status string `json:"status"`
+	}
+)
+
+service usercenter {
+	@handler GetHealth
+	get /health returns (GetHealthResp)
+}
+
+@server (
+	prefix:     /usercenter/v1
+	middleware: SignatureMiddleware
+	group:      auth
+)
+service usercenter {
+	@handler Login
+	post /auth/login (LoginReq) returns (TokenResp)
+
+	@handler Refresh
+	post /auth/refresh (RefreshReq) returns (TokenResp)
+
+	@handler Logout
+	post /auth/logout (LogoutReq)
+}
+
+@server (
+	jwt:        Auth
+	prefix:     /usercenter/v1
+	middleware: SignatureMiddleware
+	group:      users
+)
+service usercenter {
+	@handler CreateUser
+	post /users (UserCreateReq) returns (UserResp)
+
+	@handler GetUser
+	get /users/:id returns (UserResp)
+
+	@handler UpdateUser
+	put /users/:id (UserUpdateReq) returns (UserResp)
+
+	@handler DeleteUser
+	delete /users/:id
+
+	@handler ListUsers
+	get /users (UserListReq) returns (UserListResp)
+
+	@handler AssignRoleToUser
+	post /users/:id/roles (AssignRoleBody)
+
+	@handler RevokeRoleFromUser
+	delete /users/:id/roles (RevokeRoleBody)
+
+	@handler ListUserRoles
+	get /users/:id/roles returns (RoleListResp)
+}
+
+@server (
+	jwt:        Auth
+	prefix:     /usercenter/v1
+	middleware: SignatureMiddleware
+	group:      roles
+)
+service usercenter {
+	@handler CreateRole
+	post /roles (RoleCreateReq) returns (RoleResp)
+
+	@handler GetRole
+	get /roles/:id returns (RoleResp)
+
+	@handler UpdateRole
+	put /roles/:id (RoleUpdateReq) returns (RoleResp)
+
+	@handler DeleteRole
+	delete /roles/:id
+
+	@handler ListRoles
+	get /roles (RoleListReq) returns (RoleListResp)
+
+	@handler GrantPermissionToRole
+	post /roles/:id/permissions (GrantPermissionBody)
+
+	@handler RevokePermissionFromRole
+	delete /roles/:id/permissions (RevokePermissionBody)
+
+	@handler ListRolePermissions
+	get /roles/:id/permissions returns (PermissionListResp)
+}
+
+@server (
+	jwt:        Auth
+	prefix:     /usercenter/v1
+	middleware: SignatureMiddleware
+	group:      permissions
+)
+service usercenter {
+	@handler CreatePermission
+	post /permissions (PermissionCreateReq) returns (PermissionResp)
+
+	@handler GetPermission
+	get /permissions/:id returns (PermissionResp)
+
+	@handler UpdatePermission
+	put /permissions/:id (PermissionUpdateReq) returns (PermissionResp)
+
+	@handler DeletePermission
+	delete /permissions/:id
+
+	@handler ListPermissions
+	get /permissions (PermissionListReq) returns (PermissionListResp)
+}
+
+@server (
+	jwt:        Auth
+	prefix:     /usercenter/v1
+	middleware: SignatureMiddleware
+	group:      rbac
+)
+service usercenter {
+	@handler CheckPermission
+	post /rbac/check (CheckPermissionReq) returns (CheckPermissionResp)
+}
+

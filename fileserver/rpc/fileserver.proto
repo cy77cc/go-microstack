@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package fileserver;
+
+option go_package = "./pb";
+
+enum StorageType {
+  STORAGE_UNSPECIFIED = 0;
+  STORAGE_MINIO = 1;
+  STORAGE_LOCAL = 2;
+}
+
+message CreateBucketReq {
+  string bucket = 1;
+  StorageType storage_type = 2;
+}
+
+message CreateBucketResp {
+  string bucket = 1;
+}
+
+message UploadReq {
+  string bucket = 1;
+  string object_name = 2;
+  bytes data = 3;
+  string content_type = 4;
+  int64 size = 5;
+  string hash = 6;
+  uint64 uid = 7;
+}
+
+message UploadResp {
+  string file_id = 1;
+  string etag = 2;
+  string bucket = 3;
+  string object_name = 4;
+  int64 size = 5;
+}
+
+message DownloadReq {
+  string file_id = 1;
+  string bucket = 2;
+  string object_name = 3;
+}
+
+message DownloadResp {
+  bytes data = 1;
+  string content_type = 2;
+  int64 size = 3;
+  string file_name = 4;
+}
+
+message InitiateMultipartUploadReq {
+  string bucket = 1;
+  string object_name = 2;
+  int64 size = 3;
+  string content_type = 4;
+  string hash = 5;
+  uint64 uid = 6;
+}
+
+message InitiateMultipartUploadResp {
+  string upload_id = 1;
+}
+
+message UploadPartReq {
+  string upload_id = 1;
+  uint32 part_number = 2;
+  bytes data = 3;
+}
+
+message UploadPartResp {
+  string etag = 1;
+  uint32 part_number = 2;
+}
+
+message CompletedPart {
+  uint32 part_number = 1;
+  string etag = 2;
+}
+
+message CompleteMultipartUploadReq {
+  string upload_id = 1;
+  repeated CompletedPart parts = 2;
+  uint64 uid = 3;
+}
+
+message CompleteMultipartUploadResp {
+  string file_id = 1;
+  string bucket = 2;
+  string object_name = 3;
+  int64 size = 4;
+}
+
+message AbortMultipartUploadReq {
+  string upload_id = 1;
+  uint64 uid = 2;
+}
+
+message AbortMultipartUploadResp {
+  string upload_id = 1;
+}
+
+message GetFileMetaReq {
+  string file_id = 1;
+}
+
+message FileMeta {
+  string file_id = 1;
+  string file_name = 2;
+  string bucket = 3;
+  string object_name = 4;
+  int64 size = 5;
+  string content_type = 6;
+  uint64 uploader = 7;
+  int64 upload_time = 8;
+  string hash = 9;
+  int64 status = 10;
+}
+
+message GetFileMetaResp {
+  FileMeta meta = 1;
+}
+
+message GetFileUrlReq {
+  string file_id = 1;
+  int64 expires = 2; // 过期时间（秒），MinIO 有效，本地返回直链
+  uint64 uid = 3;
+}
+
+message GetFileUrlResp {
+  string url = 1;
+}
+
+service Fileserver {
+  rpc CreateBucket(CreateBucketReq) returns (CreateBucketResp);
+  rpc Upload(UploadReq) returns (UploadResp);
+  rpc Download(DownloadReq) returns (DownloadResp);
+  rpc InitiateMultipartUpload(InitiateMultipartUploadReq) returns (InitiateMultipartUploadResp);
+  rpc UploadPart(UploadPartReq) returns (UploadPartResp);
+  rpc CompleteMultipartUpload(CompleteMultipartUploadReq) returns (CompleteMultipartUploadResp);
+  rpc AbortMultipartUpload(AbortMultipartUploadReq) returns (AbortMultipartUploadResp);
+  rpc GetFileMeta(GetFileMetaReq) returns (GetFileMetaResp);
+  rpc GetFileUrl(GetFileUrlReq) returns (GetFileUrlResp);
+}

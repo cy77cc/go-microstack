@@ -1,0 +1,30 @@
+Name: usercenter.rpc
+ListenOn: 0.0.0.0:40012
+
+register:
+  type: etcd # 可选: nacos, consul, etcd, zookeeper
+  endpoints:
+    - 127.0.0.1:2379
+  namespace: public
+  username: 
+  password: 
+  timeout: 5000
+
+JwtAuth:
+  AccessSecret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  AccessExpire: 86400
+
+Salt: test
+
+Mysql:
+  DataSource: root:root@tcp(127.0.0.1:3306)/usercenter?parseTime=true
+  MaxIdleConns: 10
+  MaxOpenConns: 100
+  Timeout: 10s
+  ReadTimeout: 10s
+  WriteTimeout: 10s
+
+CacheRedis:
+  - Host: 192.168.66.150:6379
+    Type: node
+    Pass: 1qaz@2wsX

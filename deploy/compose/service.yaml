@@ -1,0 +1,112 @@
+services:
+  mysql:
+    image: mysql:8.4.1
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 9ijn#4rfv
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    networks:
+      net:
+        aliases:
+          - mysql-service
+  redis:
+    image: redis:8.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+    command: redis-server --appendonly yes
+    environment:
+      REDIS_PASSWORD: 9ijn#4rfv
+      REDIS_PORT: 6379
+      REDIS_DATABASES: 16
+      REDIS_MAXMEMORY: 1gb
+      REDIS_MAXMEMORY_POLICY: allkeys-lru
+      REDIS_MAXMEMORY_SAMPLES: 5
+    networks:
+      net:
+        aliases:
+          - redis-service
+  nacos:
+    image: nacos/nacos-server:v3.1.1
+    container_name: nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "8080:8080"
+    environment:
+      NACOS_AUTH_IDENTITY_KEY: xxxxxxxxxxxx
+      NACOS_AUTH_IDENTITY_VALUE: xxxxxxx
+      NACOS_AUTH_TOKEN: eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4Cg==
+      NACOS_AUTH_ENABLE: true
+      NACOS_DB_NUM: 1
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql-service
+      MYSQL_SERVICE_DB_NAME: nacos_config
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: 9ijn#4rfv
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/actuator/health"]
+      retries: 10
+      start_period: 5s
+      timeout: 5s
+      interval: 5s
+    networks:
+      net:
+        aliases:
+          - nacos-service
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: 9ijn#4rfv
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command:
+      - server
+      - /data
+    volumes:
+      - ./data/minio:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      retries: 10
+      start_period: 5s
+      timeout: 5s
+      interval: 5s
+    networks:
+      net:
+        aliases:
+          - minio-service
+
+
+#  etcd:
+#    image: quay.io/coreos/etcd:v3.6.7
+#    container_name: etcd-single
+#    environment:
+#      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+#      - ETCD_ADVERTISE_CLIENT_URLS=http://127.0.0.1:2379
+#      - ETCD_DATA_DIR=/etcd-data
+#    volumes:
+#      - ./data/etcd-data:/etcd-data
+#    ports:
+#      - "2379:2379"
+#      - "2380:2380"
+#      - "4001:4001"
+#    command: >
+#      /usr/local/bin/etcd
+#      --name single-node
+#      --data-dir /etcd-data
+#      --listen-client-urls http://0.0.0.0:2379
+#      --advertise-client-urls http://127.0.0.1:2379
+#    networks:
+#      net:
+networks:
+  net:
+    driver: bridge

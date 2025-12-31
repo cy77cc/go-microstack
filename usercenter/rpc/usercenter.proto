@@ -1,0 +1,283 @@
+syntax = "proto3";
+
+package usercenter;
+
+option go_package = "./pb";
+
+enum PermissionType {
+  PERM_UNSPECIFIED = 0;
+  MENU = 1;
+  API = 2;
+  BUTTON = 3;
+}
+
+message User {
+  uint64 id = 1;
+  string username = 2;
+  string email = 3;
+  string phone = 4;
+  string avatar = 5;
+  int32 status = 6;
+  int64 create_time = 7;
+  int64 update_time = 8;
+  int64 last_login_time = 9;
+}
+
+message Role {
+  uint64 id = 1;
+  string name = 2;
+  string code = 3;
+  string description = 4;
+  int32 status = 5;
+  int64 create_time = 6;
+  int64 update_time = 7;
+}
+
+message Permission {
+  uint64 id = 1;
+  string name = 2;
+  string code = 3;
+  PermissionType type = 4;
+  string resource = 5;
+  string action = 6;
+  string description = 7;
+  int32 status = 8;
+  int64 create_time = 9;
+  int64 update_time = 10;
+}
+
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResp {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires = 3;
+  uint64 uid = 4;
+  repeated string roles = 5;
+}
+
+message RefreshTokenReq {
+  string refresh_token = 1;
+}
+
+message LogoutReq {
+  uint64 uid = 1;
+  string refresh_token = 2;
+}
+
+message LogoutResp {
+  bool success = 1;
+}
+
+message VerifyTokenReq {
+  string access_token = 1;
+}
+
+message VerifyTokenResp {
+  bool valid = 1;
+  uint64 uid = 2;
+  repeated string roles = 3;
+}
+
+message CreateUserReq {
+  string username = 1;
+  string password = 2;
+  string email = 3;
+  string phone = 4;
+  string avatar = 5;
+}
+
+message UserResp {
+  User user = 1;
+}
+
+message GetUserReq {
+  uint64 id = 1;
+}
+
+message UpdateUserReq {
+  uint64 id = 1;
+  string email = 2;
+  string phone = 3;
+  string avatar = 4;
+  int32 status = 5;
+}
+
+message DeleteUserReq {
+  uint64 id = 1;
+}
+
+message ListUsersReq {
+  string query = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListUsersResp {
+  repeated User users = 1;
+  int64 total = 2;
+}
+
+message CreateRoleReq {
+  string name = 1;
+  string code = 2;
+  string description = 3;
+}
+
+message RoleResp {
+  Role role = 1;
+}
+
+message GetRoleReq {
+  uint64 id = 1;
+}
+
+message UpdateRoleReq {
+  uint64 id = 1;
+  string name = 2;
+  string description = 3;
+  int32 status = 4;
+}
+
+message DeleteRoleReq {
+  uint64 id = 1;
+}
+
+message ListRolesReq {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListRolesResp {
+  repeated Role roles = 1;
+  int64 total = 2;
+}
+
+message CreatePermissionReq {
+  string name = 1;
+  string code = 2;
+  PermissionType type = 3;
+  string resource = 4;
+  string action = 5;
+  string description = 6;
+}
+
+message PermissionResp {
+  Permission permission = 1;
+}
+
+message GetPermissionReq {
+  uint64 id = 1;
+}
+
+message UpdatePermissionReq {
+  uint64 id = 1;
+  string name = 2;
+  string description = 3;
+  int32 status = 4;
+  string resource = 5;
+  string action = 6;
+  PermissionType type = 7;
+}
+
+message DeletePermissionReq {
+  uint64 id = 1;
+}
+
+message ListPermissionsReq {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListPermissionsResp {
+  repeated Permission permissions = 1;
+  int64 total = 2;
+}
+
+message AssignRoleReq {
+  uint64 uid = 1;
+  repeated uint64 role_ids = 2;
+}
+
+message RevokeRoleReq {
+  uint64 uid = 1;
+  repeated uint64 role_ids = 2;
+}
+
+message GrantPermissionReq {
+  uint64 role_id = 1;
+  repeated uint64 permission_ids = 2;
+}
+
+message RevokePermissionReq {
+  uint64 role_id = 1;
+  repeated uint64 permission_ids = 2;
+}
+
+message ListUserRolesReq {
+  uint64 uid = 1;
+}
+
+message ListUserRolesResp {
+  repeated Role roles = 1;
+}
+
+message ListRolePermissionsReq {
+  uint64 role_id = 1;
+}
+
+message ListRolePermissionsResp {
+  repeated Permission permissions = 1;
+}
+
+message CheckPermissionReq {
+  uint64 uid = 1;
+  string resource = 2;
+  string action = 3;
+}
+
+message CheckPermissionResp {
+  bool allowed = 1;
+}
+// 这是goctl的写法，在生成时请加上-m参数
+service AuthService {
+  rpc Login(LoginReq) returns (LoginResp);
+  rpc RefreshToken(RefreshTokenReq) returns (LoginResp);
+  rpc Logout(LogoutReq) returns (LogoutResp);
+  rpc VerifyToken(VerifyTokenReq) returns (VerifyTokenResp);
+}
+
+service UserService {
+  rpc CreateUser(CreateUserReq) returns (UserResp);
+  rpc GetUser(GetUserReq) returns (UserResp);
+  rpc UpdateUser(UpdateUserReq) returns (UserResp);
+  rpc DeleteUser(DeleteUserReq) returns (LogoutResp);
+  rpc ListUsers(ListUsersReq) returns (ListUsersResp);
+  rpc AssignRoleToUser(AssignRoleReq) returns (LogoutResp);
+  rpc RevokeRoleFromUser(RevokeRoleReq) returns (LogoutResp);
+  rpc ListUserRoles(ListUserRolesReq) returns (ListUserRolesResp);
+}
+
+service RoleService {
+  rpc CreateRole(CreateRoleReq) returns (RoleResp);
+  rpc GetRole(GetRoleReq) returns (RoleResp);
+  rpc UpdateRole(UpdateRoleReq) returns (RoleResp);
+  rpc DeleteRole(DeleteRoleReq) returns (LogoutResp);
+  rpc ListRoles(ListRolesReq) returns (ListRolesResp);
+  rpc GrantPermissionToRole(GrantPermissionReq) returns (LogoutResp);
+  rpc RevokePermissionFromRole(RevokePermissionReq) returns (LogoutResp);
+  rpc ListRolePermissions(ListRolePermissionsReq) returns (ListRolePermissionsResp);
+}
+
+service PermissionService {
+  rpc CreatePermission(CreatePermissionReq) returns (PermissionResp);
+  rpc GetPermission(GetPermissionReq) returns (PermissionResp);
+  rpc UpdatePermission(UpdatePermissionReq) returns (PermissionResp);
+  rpc DeletePermission(DeletePermissionReq) returns (LogoutResp);
+  rpc ListPermissions(ListPermissionsReq) returns (ListPermissionsResp);
+  rpc CheckPermission(CheckPermissionReq) returns (CheckPermissionResp);
+}
+

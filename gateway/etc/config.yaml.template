@@ -1,0 +1,15 @@
+server:
+  name: gin-gateway
+  host: 0.0.0.0
+  port: 41000
+  mode: release # debug / release
+
+
+proxy:
+  timeout_ms: "3000ms"
+  keep_alive: true
+
+
+logging:
+  level: info
+  access_log: true

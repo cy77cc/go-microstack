@@ -1,0 +1,22 @@
+services:
+  gateway:
+    build:
+      context: ../../
+      dockerfile: gateway/Dockerfile
+    image: gateway-api:latest
+    env_file:
+      - ../.env
+    container_name: gateway-api
+    ports:
+      - "41000:41000"
+    restart: unless-stopped
+    networks:
+      net:
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://127.0.0.1:41000/health" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+networks:
+  net:
+    driver: bridge

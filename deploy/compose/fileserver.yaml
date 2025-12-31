@@ -1,0 +1,44 @@
+services:
+  fileserver-rpc:
+    build:
+      context: ../../
+      dockerfile: fileserver/rpc/Dockerfile
+    image: fileserver-rpc:latest
+    container_name: fileserver-rpc
+    env_file:
+      - ../.env
+    ports:
+      - "41011:41011"
+    restart: unless-stopped
+    networks:
+      net:
+    healthcheck:
+      test: ["CMD", "echo > /dev/tcp/127.0.0.1/40011"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  fileserver-api:
+    build:
+      context: ../../
+      dockerfile: fileserver/api/Dockerfile
+    image: fileserver-api:latest
+    container_name: fileserver-api
+    env_file:
+      - ../.env
+    ports:
+      - "41001:41001"
+    depends_on:
+      - fileserver-rpc
+    restart: unless-stopped
+    networks:
+      net:
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:41001/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+networks:
+  net:
+    driver: bridge

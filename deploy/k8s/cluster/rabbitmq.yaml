@@ -1,0 +1,239 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rabbitmq
+  labels:
+    istio.io/dataplane-mode: ambient
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-env
+  namespace: rabbitmq
+data:
+  RABBITMQ_rabbitmq_PASS: "1qaz@3edC"
+  RABBITMQ_rabbitmq_USER: "admin"
+  RABBITMQ_ERLANG_COOKIE: "IZJRZBEFPOOQONORATVO"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+  namespace: rabbitmq
+data:
+  enabled_plugins: |
+    [rabbitmq_management,rabbitmq_peer_discovery_k8s].
+  rabbitmq.conf: |
+    rabbitmq_user = admin
+    rabbitmq_pass = 1qaz@3edC
+    loopback_users.guest = false
+
+    cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+    cluster_formation.k8s.host = kubernetes.rabbitmq.svc.cluster.local
+    cluster_formation.k8s.address_type = hostname
+    cluster_partition_handling = autoheal
+    cluster_formation.k8s.service_name = rabbitmq-hl
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rabbitmq-cluster
+  namespace: rabbitmq
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: rabbitmq-cluster
+  namespace: rabbitmq
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rabbitmq-cluster
+  namespace: rabbitmq
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rabbitmq-cluster
+subjects:
+  - kind: ServiceAccount
+    name: rabbitmq-cluster
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-hl
+  namespace: rabbitmq
+spec:
+  clusterIP: None
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: epmd
+      port: 4369
+    - name: dist
+      port: 25672
+    - name: management
+      port: 15672
+  selector:
+    app: rabbitmq
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: rabbitmq
+spec:
+  type: NodePort
+  ports:
+    - name: amqp
+      nodePort: 5672
+      port: 5672
+    - name: epmd
+      nodePort: 4369
+      port: 4369
+    - name: dist
+      nodePort: 25672
+      port: 25672
+    - name: management
+      nodePort: 15672
+      port: 15672
+  selector:
+    app: rabbitmq
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    version: ""
+    component_name: ""
+  labels:
+    app: rabbitmq
+  name: rabbitmq
+  namespace: rabbitmq
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rabbitmq
+  serviceName: rabbitmq-hl
+  template:
+    metadata:
+      annotations:
+        version: ""
+        component_name: ""
+      labels:
+        app: rabbitmq
+    spec:
+      serviceAccountName: rabbitmq-cluster
+      terminationGracePeriodSeconds: 30
+      containers:
+        - image: rabbitmq:3.8.17-management
+          imagePullPolicy: IfNotPresent
+          name: rabbitmq
+          command:
+            - sh
+            - -c
+            - echo -n ${RABBITMQ_ERLANG_COOKIE} > /var/lib/rabbitmq/.erlang.cookie; chmod
+              0600 /var/lib/rabbitmq/.erlang.cookie; exec docker-entrypoint.sh rabbitmq-server
+          ports:
+            - containerPort: 5672
+              name: amqp
+            - containerPort: 4369
+              name: epmd
+            - containerPort: 25672
+              name: dist
+            - containerPort: 15672
+              name: management
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: K8S_SERVICE_NAME
+              value: rabbitmq-hl
+            - name: RABBITMQ_CLUSTER_FORMATION_K8S_NAMESPACE
+              value: $(POD_NAMESPACE)
+            - name: RABBITMQ_USE_LONGNAME
+              value: "true"
+            - name: RABBITMQ_NODENAME
+              value: rabbit@$(POD_NAME).$(K8S_SERVICE_NAME).$(POD_NAMESPACE).svc.cluster.local
+            - name: K8S_HOSTNAME_SUFFIX
+              value: .$(K8S_SERVICE_NAME).$(POD_NAMESPACE).svc.cluster.local
+          envFrom:
+            - configMapRef:
+                name: rabbitmq-env
+          startupProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - status
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - status
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - status
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /etc/rabbitmq
+              name: config-volume
+              readOnly: false
+            - mountPath: /etc/localtime
+              name: timezone
+              readOnly: true
+            - mountPath: /var/lib/rabbitmq
+              name: data
+            - mountPath: /var/log/rabbitmq
+              name: logs
+      volumes:
+        - configMap:
+            items:
+              - key: rabbitmq.conf
+                path: rabbitmq.conf
+              - key: enabled_plugins
+                path: enabled_plugins
+            name: rabbitmq-config
+          name: config-volume
+        - hostPath:
+            path: /etc/localtime
+          name: timezone
+        - hostPath:
+            path: /data/rabbitmq/logs
+          name: logs
+        - hostPath:
+            path: /data/rabbitmq/data
+          name: data
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: rabbitmq
+              topologyKey: kubernetes.io/hostname

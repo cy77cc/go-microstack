@@ -1,0 +1,141 @@
+syntax = "v1"
+
+info (
+	title:   "文件服务 API"
+	desc:    "提供单文件上传下载、分片上传、元数据查询"
+	author:  "fileserver"
+	version: "1.0"
+)
+
+type (
+	UploadFileReq {
+		Bucket      string `form:"bucket"`
+		Key         string `form:"key"`
+		Hash        string `form:"hash"`
+		Size        int64  `form:"size"`
+		ContentType string `form:"contentType"`
+	}
+	UploadFileResp {
+		FileId string `json:"fileId"`
+		Bucket string `json:"bucket"`
+		Key    string `json:"key"`
+		Size   int64  `json:"size"`
+		ETag   string `json:"eTag"`
+	}
+	InitiateMultipartReq {
+		Bucket      string `json:"bucket"`
+		Key         string `json:"key"`
+		Hash        string `json:"hash"`
+		Size        int64  `json:"size"`
+		ContentType string `json:"contentType"`
+	}
+	InitiateMultipartResp {
+		UploadId string `json:"uploadId"`
+	}
+	UploadPartReq {
+		UploadId   string `path:"uploadId"`
+		PartNumber uint32 `path:"partNumber"`
+	}
+	UploadPartResp {
+		ETag       string `json:"eTag"`
+		PartNumber uint32 `json:"partNumber"`
+	}
+	CompletedPart {
+		PartNumber uint32 `json:"partNumber"`
+		ETag       string `json:"eTag"`
+	}
+	CompleteMultipartReq {
+		UploadId string          `path:"uploadId"`
+		Parts    []CompletedPart `json:"parts"`
+	}
+	CompleteMultipartResp {
+		FileId string `json:"fileId"`
+		Bucket string `json:"bucket"`
+		Key    string `json:"key"`
+		Size   int64  `json:"size"`
+	}
+	AbortMultipartReq {
+		UploadId string `path:"uploadId"`
+	}
+	FileMetaResp {
+		FileId      string `json:"fileId"`
+		FileName    string `json:"fileName"`
+		Bucket      string `json:"bucket"`
+		Key         string `json:"key"`
+		Size        int64  `json:"size"`
+		ContentType string `json:"contentType"`
+		Uploader    uint64 `json:"uploader"`
+		UploadTime  int64  `json:"uploadTime"`
+		Hash        string `json:"hash"`
+		Status      int64  `json:"status"`
+	}
+	PresignResp {
+		Url    string `json:"url"`
+		Expire int64  `json:"expire"`
+	}
+	BucketReq {
+		Bucket      string `json:"bucket"`
+		StorageType int32  `json:"storageType"`
+	}
+	BucketResp {
+		Bucket string `json:"bucket"`
+	}
+	HealthResp {
+		Status string `json:"status"`
+	}
+)
+
+service fileserver {
+	@handler GetHealth
+	get /health returns (HealthResp)
+}
+
+@server (
+	jwt:        Auth
+	prefix:     /fileserver/v1
+	middleware: SignatureMiddleware
+	group:      buckets
+)
+service fileserver {
+	@handler CreateBucket
+	post /buckets (BucketReq) returns (BucketResp)
+}
+
+@server (
+	jwt:        Auth
+	prefix:     /fileserver/v1
+	middleware: SignatureMiddleware
+	group:      files
+)
+
+service fileserver {
+	@handler UploadFile
+	post /files (UploadFileReq) returns (UploadFileResp)
+
+	@handler GetFileMeta
+	get /files/:fileId/meta returns (FileMetaResp)
+
+	@handler GetDownloadUrl
+	get /files/:fileId/url returns (PresignResp)
+}
+
+@server (
+	jwt:        Auth
+	prefix:     /fileserver/v1
+	middleware: SignatureMiddleware
+	group:      uploads
+)
+service fileserver {
+	@handler InitiateMultipartUpload
+	post /uploads (InitiateMultipartReq) returns (InitiateMultipartResp)
+
+	@handler UploadPart
+	put /uploads/:uploadId/parts/:partNumber (UploadPartReq) returns (UploadPartResp)
+
+	@handler CompleteMultipartUpload
+	post /uploads/:uploadId/complete (CompleteMultipartReq) returns (CompleteMultipartResp)
+
+	@handler AbortMultipartUpload
+	delete /uploads/:uploadId (AbortMultipartReq)
+}
+

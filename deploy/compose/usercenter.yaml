@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+  usercenter-rpc:
+    build:
+      context: ../../usercenter
+      dockerfile: rpc/Dockerfile
+    image: usercenter-rpc:latest
+    container_name: usercenter-rpc
+    environment:
+      # 以环境变量覆盖 etc 配置中的敏感信息更安全
+      MYSQL_DSN: ${MYSQL_DSN}
+      REDIS_HOST: ${REDIS_HOST}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    ports:
+      - "41012:41012"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "echo > /dev/tcp/127.0.0.1/40012"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  usercenter-api:
+    build:
+      context: ../../usercenter
+      dockerfile: api/Dockerfile
+    image: usercenter-api:latest
+    container_name: usercenter-api
+    environment:
+      FILE_RPC_ETCD_HOSTS: "127.0.0.1:2379"
+      FILE_RPC_ETCD_KEY: "file.rpc"
+      SIGN_SECRET: ${SIGN_SECRET}
+      SIGN_SKEW: "300"
+    ports:
+      - "41002:41002"
+    depends_on:
+      - usercenter-rpc
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:41002/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+networks:
+  net:
+    driver: bridge
