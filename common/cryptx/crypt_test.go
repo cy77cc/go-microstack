@@ -5,8 +5,8 @@ import (
 )
 
 func TestEncrypt(t *testing.T) {
-	plaintext := "xxxxx"
-	salt := "HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe"
+	plaintext := ""
+	salt := "="
 	
 	ciphertext := PasswordEncrypt(salt, plaintext)
 	t.Logf("ciphertext: %s", ciphertext)
