@@ -2,7 +2,10 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"github.com/cy77cc/go-microstack/common/xcode"
+	"github.com/cy77cc/go-microstack/fileserver/model"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
 
@@ -27,6 +30,9 @@ func (l *GetFileUrlLogic) GetFileUrl(in *pb.GetFileUrlReq) (*pb.GetFileUrlResp, 
 	// 1. 获取文件元数据
 	fileInfo, err := l.svcCtx.FileModel.FindOneByFileId(l.ctx, in.FileId)
 	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, xcode.NewErrCode(xcode.NotFound)
+		}
 		return nil, err
 	}
 

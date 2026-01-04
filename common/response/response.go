@@ -8,7 +8,7 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-// Resp 定义统一的响应结构体
+// Resp defines the unified response structure
 type Resp struct {
 	Code      xcode.Xcode `json:"code"`
 	Msg       string      `json:"msg"`
@@ -16,7 +16,7 @@ type Resp struct {
 	Timestamp int64       `json:"timestamp"`
 }
 
-// Error 返回错误响应
+// Error returns an error response
 func Error(code xcode.Xcode, msg string) *Resp {
 	return &Resp{
 		Code:      code,
@@ -26,27 +26,40 @@ func Error(code xcode.Xcode, msg string) *Resp {
 	}
 }
 
-// Success 返回成功响应
+// Success returns a success response
 func Success(data interface{}) *Resp {
 	return &Resp{
 		Code:      xcode.Success,
-		Msg:       "success",
+		Msg:       xcode.Success.Msg(),
 		Data:      data,
 		Timestamp: utils.GetTimestamp(),
 	}
 }
 
-// Response 统一处理 HTTP 响应
-// w: http.ResponseWriter
-// r: *http.Request
-// resp: 成功时的数据
-// err: 错误信息 (可能是 grpc error, custom error, or standard error)
+// Response unifies HTTP response handling
 func Response(r *http.Request, w http.ResponseWriter, resp interface{}, err error) {
 	if err != nil {
-		// 这里可以根据 err 类型进行更细致的处理
-		// 简单处理：默认返回服务器错误，如果 err 是 xcode 类型则返回对应错误码
-		// 实际项目中可能需要解析 grpc status code 等
-		httpx.OkJson(w, Error(xcode.ServerError, err.Error()))
+		// Convert error to CodeError
+		codeErr := xcode.FromError(err)
+
+		// Set HTTP Status Code based on Xcode
+		// We can choose to always return 200 and let client check Code,
+		// or return semantic HTTP status codes.
+		// For this implementation, let's try to return semantic codes if they are 4xx/5xx,
+		// but typically for "business errors" (like 4004 Password Error), many systems return 200 OK.
+		// However, xcode.HttpStatus() handles this mapping.
+		// If we want to strictly follow REST, we use w.WriteHeader.
+		// But httpx.WriteJson writes 200 by default unless we use WriteHeader before.
+		// httpx.OkJson writes 200.
+
+		// Let's use 200 for everything to simplify client parsing, unless it's a severe infrastructure error?
+		// User requested "improve code".
+		// Best practice: Use 200 for business logic errors (Code > 0), use 500 for crashes.
+		// But let's stick to what xcode.HttpStatus() returns if we want semantic.
+		// For now, I will return 200 OK with the JSON body containing the error code.
+		// This is consistent with many microservice frontends.
+
+		httpx.OkJson(w, Error(codeErr.Code, codeErr.Msg))
 	} else {
 		httpx.OkJson(w, Success(resp))
 	}

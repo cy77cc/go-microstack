@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/cy77cc/go-microstack/common/response"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/logic/fileserver"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/svc"
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -16,7 +17,7 @@ func GetDownloadUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			FileId string `path:"fileId"`
 		}
 		if err := httpx.Parse(r, &path); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			response.Response(r, w, nil, err)
 			return
 		}
 		expires := int64(600)
@@ -29,10 +30,6 @@ func GetDownloadUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		ctx = context.WithValue(ctx, "expires", expires)
 		l := fileserver.NewGetDownloadUrlLogic(ctx, svcCtx)
 		resp, err := l.GetDownloadUrl()
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
-		}
+		response.Response(r, w, resp, err)
 	}
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/cy77cc/go-microstack/common/register"
 	"github.com/cy77cc/go-microstack/common/register/types"
 	"github.com/cy77cc/go-microstack/common/utils"
+	"github.com/cy77cc/go-microstack/common/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/config"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/server"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
@@ -91,6 +92,7 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
+	s.AddUnaryInterceptors(xcode.Interceptor)
 	defer s.Stop()
 
 	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)

@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"path/filepath"
 	"time"
 
+	"github.com/cy77cc/go-microstack/common/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/model"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
@@ -31,11 +31,11 @@ func NewUploadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadLogi
 func (l *UploadLogic) Upload(in *pb.UploadReq) (*pb.UploadResp, error) {
 	// 1. 校验文件扩展名是否允许
 	if !l.svcCtx.Tools.CheckExtension(in.ObjectName) {
-		return nil, errors.New("extension not allowed")
+		return nil, xcode.NewErrCodeMsg(xcode.FileTypeInvalid, "extension not allowed")
 	}
 	// 2. 校验文件大小是否超过限制
 	if !l.svcCtx.Tools.CheckFileSize(int64(len(in.Data))) {
-		return nil, errors.New("file size exceed limit")
+		return nil, xcode.NewErrCodeMsg(xcode.FileUploadFail, "file size exceed limit")
 	}
 	// 3. 推断 Content-Type (如果未提供)
 	if in.ContentType == "" {
@@ -49,7 +49,7 @@ func (l *UploadLogic) Upload(in *pb.UploadReq) (*pb.UploadResp, error) {
 		if err == nil && exist != nil {
 			// TODO: 如果需要权限隔离，可以在这里检查 Uploader 是否匹配，或者增加引用计数
 			// if exist.Uploader != in.Uid { return error }
-			
+
 			// 简单实现：直接返回已存在文件的信息，实现秒传效果
 			return &pb.UploadResp{
 				FileId:     exist.FileId,

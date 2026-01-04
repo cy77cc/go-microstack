@@ -5,13 +5,12 @@ import (
 	"errors"
 
 	"github.com/cy77cc/go-microstack/common/cryptx"
+	"github.com/cy77cc/go-microstack/common/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type CreateUserLogic struct {
@@ -31,7 +30,7 @@ func NewCreateUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 func (l *CreateUserLogic) CreateUser(in *pb.CreateUserReq) (*pb.UserResp, error) {
 	_, err := l.svcCtx.UsersModel.FindOneByUsername(l.ctx, in.Username)
 	if err == nil {
-		return nil, status.Error(codes.AlreadyExists, "username already exists")
+		return nil, xcode.NewErrCodeMsg(xcode.UserAlreadyExist, "username already exists")
 	}
 	if !errors.Is(err, model.ErrNotFound) {
 		return nil, err

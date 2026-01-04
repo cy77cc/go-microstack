@@ -7,14 +7,13 @@ import (
 	"time"
 
 	"github.com/cy77cc/go-microstack/common/cryptx"
+	"github.com/cy77cc/go-microstack/common/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type LoginLogic struct {
@@ -36,7 +35,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	user, err := l.svcCtx.UsersModel.FindOneByUsername(l.ctx, in.Username)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return nil, status.Error(codes.Unauthenticated, "invalid username or password")
+			return nil, xcode.NewErrCodeMsg(xcode.UserNotExist, "invalid username or password")
 		}
 		return nil, err
 	}
@@ -44,7 +43,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 2. Check password
 	password := cryptx.PasswordEncrypt(l.svcCtx.Config.Salt, in.Password)
 	if password != user.PasswordHash {
-		return nil, status.Error(codes.Unauthenticated, "invalid username or password")
+		return nil, xcode.NewErrCodeMsg(xcode.PasswordError, "invalid username or password")
 	}
 
 	// 3. Fetch Roles
