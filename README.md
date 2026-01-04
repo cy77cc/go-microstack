@@ -41,6 +41,32 @@ Go Microstack 是一个基于 [Go Zero](https://go-zero.dev/) 微服务框架构
     *   进入 `fileserver/rpc` 修改配置并启动 `go run fileserver.go`
     *   进入 `fileserver/api` 修改配置并启动 `go run fileserver.go`
 
+## 可观测性接入指南 (Observability)
+
+本项目已集成统一的审计日志与指标监控体系。
+
+### 1. 审计日志 (Audit Log)
+所有 API 请求会自动记录审计日志，包含 TraceID, UserID, Method, Path, Status, Duration, ClientIP 等信息。
+日志默认输出到标准输出 (stdout)，格式为 JSON，可通过日志收集系统 (如 ELK/Loki) 采集 `[AUDIT]` 关键字。
+
+### 2. 监控指标 (Metrics)
+各服务已暴露 Prometheus 格式的监控指标，可直接对接 Prometheus/Grafana。
+
+| 服务名称 | Metrics 端点 | 描述 |
+| :--- | :--- | :--- |
+| **User Center** | `http://<host>:41003/metrics` | 用户中心 API 指标 |
+| **File Server** | `http://<host>:41004/metrics` | 文件服务 API 指标 |
+| **Gateway** | `http://<host>:41000/metrics` | 网关层指标 (Gin) |
+
+**指标说明**:
+*   `microstack_requests_duration_ms_bucket`: 请求耗时分布 (Histogram)
+*   `microstack_requests_code_total`: 请求状态码计数 (Counter)
+*   `gateway_requests_duration_ms_bucket`: 网关请求耗时 (Histogram)
+*   `gateway_requests_code_total`: 网关请求状态码 (Counter)
+
+### 3. 链路追踪 (Tracing)
+基于 Go Zero 的 OpenTelemetry 支持。需在 `etc/*.yaml` 中配置 `Telemetry` 节点对接 Jaeger/Zipkin。
+
 ## 开发规范
 
 *   **API 定义**: 使用 `.api` 文件定义 HTTP 接口，通过 `goctl api go` 生成代码。

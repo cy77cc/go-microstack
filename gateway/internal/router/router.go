@@ -20,6 +20,10 @@ func NewRouter() *Router {
 
 // RegisterRoutes 注册路由
 func (*Router) RegisterRoutes(r *gin.Engine, routes []config.Route, proxyHandler *proxy.Handler) {
+	// 全局中间件
+	r.Use(middleware.AuditMiddleware())
+	r.Use(middleware.MetricMiddleware())
+
 	// 初始化中间件管理器（单例模式，只需调用一次）
 	middleware.InitBreakerManager()
 	middleware.InitBucketManager()

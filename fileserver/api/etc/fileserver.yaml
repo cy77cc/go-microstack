@@ -2,6 +2,11 @@ Name: fileserver
 Host: 0.0.0.0
 Port: 41001
 
+Prometheus:
+  Host: 0.0.0.0
+  Port: 41004
+  Path: /metrics
+
 register:
   type: nacos # 可选: nacos, consul, etcd, zookeeper
   endpoints:

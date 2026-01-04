@@ -41,7 +41,7 @@ func Success(data interface{}) *Resp {
 // r: *http.Request
 // resp: 成功时的数据
 // err: 错误信息 (可能是 grpc error, custom error, or standard error)
-func Response(w http.ResponseWriter, r *http.Request, resp interface{}, err error) {
+func Response(r *http.Request, w http.ResponseWriter, resp interface{}, err error) {
 	if err != nil {
 		// 这里可以根据 err 类型进行更细致的处理
 		// 简单处理：默认返回服务器错误，如果 err 是 xcode 类型则返回对应错误码

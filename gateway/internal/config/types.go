@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/middleware/redis"
+	"github.com/cy77cc/go-microstack/common/redis"
 	"github.com/cy77cc/go-microstack/common/register"
 )
 

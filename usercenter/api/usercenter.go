@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/cy77cc/go-microstack/common/middleware"
 	"github.com/cy77cc/go-microstack/common/register"
 	"github.com/cy77cc/go-microstack/common/register/types"
 	"github.com/cy77cc/go-microstack/common/utils"
@@ -85,6 +86,10 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+
+	// Add Global Middleware
+	server.Use(middleware.NewAuditMiddleware().Handle)
+	server.Use(middleware.NewMetricMiddleware().Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

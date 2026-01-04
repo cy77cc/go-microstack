@@ -1,7 +1,7 @@
 package svc
 
 import (
-	commonRedis "github.com/cy77cc/go-microstack/common/middleware/redis"
+	commonRedis "github.com/cy77cc/go-microstack/common/redis"
 	"github.com/cy77cc/go-microstack/common/register/types"
 	"github.com/cy77cc/go-microstack/gateway/internal/config"
 	"github.com/redis/go-redis/v9"
