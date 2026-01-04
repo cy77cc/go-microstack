@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
 
@@ -34,19 +35,19 @@ func (l *AbortMultipartUploadLogic) AbortMultipartUpload(in *pb.AbortMultipartUp
 	}
 	// 权限检查
 	if in.Uid > 0 && rec.Uploader != in.Uid {
-		return nil, errors.New("permission denied")
+		return nil, xcode.NewErrCodeMsg(xcode.PermissionDenied, "permission denied")
 	}
 
 	stor, err := l.svcCtx.Storage.Select(l.ctx, rec.Bucket)
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 	if err = stor.AbortMultipart(l.ctx, rec.Bucket, rec.ObjectName, rec.UploadId); err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.ServerError, "server error")
 	}
 	// 更新状态
 	if err = l.svcCtx.UploadModel.UpdateStatusByUploadId(l.ctx, rec.UploadId, 2, 0); err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 	// 清理分片明细
 	_ = l.svcCtx.UploadPartMod.DeleteByUploadId(l.ctx, rec.UploadId)

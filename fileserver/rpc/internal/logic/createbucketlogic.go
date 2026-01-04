@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/model"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
@@ -27,7 +28,7 @@ func NewCreateBucketLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 
 func (l *CreateBucketLogic) CreateBucket(in *pb.CreateBucketReq) (*pb.CreateBucketResp, error) {
 	if in.Bucket == "" {
-		return nil, errors.New("bucket empty")
+		return nil, xcode.NewErrCodeMsg(xcode.ErrInvalidParam, "param bucket empty")
 	}
 	var st int64
 	switch in.StorageType {
@@ -48,10 +49,10 @@ func (l *CreateBucketLogic) CreateBucket(in *pb.CreateBucketReq) (*pb.CreateBuck
 	}
 	stor, err := l.svcCtx.Storage.Select(l.ctx, in.Bucket)
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 	if err = stor.CreateBucket(l.ctx, in.Bucket); err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.ServerError, "server error")
 	}
 
 	return &pb.CreateBucketResp{Bucket: in.Bucket}, nil

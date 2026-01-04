@@ -2,8 +2,11 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"path/filepath"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
+	"github.com/cy77cc/go-microstack/fileserver/model"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
 
@@ -29,7 +32,10 @@ func (l *DownloadLogic) Download(in *pb.DownloadReq) (*pb.DownloadResp, error) {
 	if in.FileId != "" {
 		fi, err := l.svcCtx.FileModel.FindOneByFileId(l.ctx, in.FileId)
 		if err != nil {
-			return nil, err
+			if errors.Is(err, model.ErrNotFound) {
+				return nil, xcode.NewErrCodeMsg(xcode.NotFound, "file not exist")
+			}
+			return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 		}
 		bucket = fi.Bucket
 		objectName = fi.ObjectName

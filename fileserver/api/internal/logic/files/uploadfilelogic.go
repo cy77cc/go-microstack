@@ -27,40 +27,33 @@ func NewUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upload
 }
 
 func (l *UploadFileLogic) UploadFile(req *types.UploadFileReq) (resp *types.UploadFileResp, err error) {
-	// TODO: 实现单文件上传逻辑
-	// 1. 读取 HTTP 请求中的文件内容 (MultipartForm)
-	// 2. 将文件内容读取为 []byte
-	// 3. 调用 RPC 服务的 Upload 接口
-	//    res, err := l.svcCtx.FileService.Upload(l.ctx, &fileservice.UploadReq{ ... })
-	// 4. 返回 RPC 响应结果
-
-	fileData, ok := l.ctx.Value("fileData").([]byte)
-	if !ok {
-		return nil, xcode.NewErrCode(xcode.FileUploadFail)
+	data, _ := l.ctx.Value("fileData").([]byte)
+	if len(data) == 0 {
+		return nil, xcode.NewErrCodeMsg(xcode.ErrInvalidParam, "empty file data")
 	}
-
-	uid := l.ctx.Value("uid").(uint64)
-
-	// 3. 调用 RPC 服务的 Upload 接口
-	res, err := l.svcCtx.FilesRpc.Upload(l.ctx, &pb.UploadReq{
+	if req.Size == 0 {
+		req.Size = int64(len(data))
+	}
+	uid, _ := l.ctx.Value("uid").(uint64)
+	rpcResp, err := l.svcCtx.FilesRpc.Upload(l.ctx, &pb.UploadReq{
 		Bucket:      req.Bucket,
+		ObjectName:  req.Key,
+		Data:        data,
 		ContentType: req.ContentType,
-		Size:        int64(len(fileData)),
-		Uid:         uid,
+		Size:        req.Size,
 		Hash:        req.Hash,
-		Data:        fileData,
+		Uid:         uid,
 	})
 
 	if err != nil {
-		return nil, xcode.NewErrCode(xcode.FileUploadFail)
+		return nil, err
 	}
 
-	// 5. 返回响应
 	return &types.UploadFileResp{
-		FileId: res.FileId,
-		Bucket: res.Bucket,
-		Key:    res.ObjectName,
-		Size:   res.Size,
-		ETag:   res.Etag,
+		FileId: rpcResp.FileId,
+		Bucket: rpcResp.Bucket,
+		Key:    rpcResp.ObjectName,
+		Size:   rpcResp.Size,
+		ETag:   rpcResp.Etag,
 	}, nil
 }

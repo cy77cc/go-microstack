@@ -3,8 +3,10 @@ package uploads
 import (
 	"context"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/types"
+	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +26,17 @@ func NewAbortMultipartUploadLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *AbortMultipartUploadLogic) AbortMultipartUpload(req *types.AbortMultipartReq) error {
-	// todo: add your logic here and delete this line
+	if req.UploadId == "" {
+		return xcode.NewErrCodeMsg(xcode.ErrInvalidParam, "uploadId empty")
+	}
+	uid, _ := l.ctx.Value("uid").(uint64)
+	_, err := l.svcCtx.FilesRpc.AbortMultipartUpload(l.ctx, &pb.AbortMultipartUploadReq{
+		UploadId: req.UploadId,
+		Uid:      uid,
+	})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

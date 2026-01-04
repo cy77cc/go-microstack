@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/cy77cc/go-microstack/common/pkg/response"
-	"github.com/cy77cc/go-microstack/fileserver/api/internal/logic/fileserver"
+	"github.com/cy77cc/go-microstack/fileserver/api/internal/logic/files"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/svc"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
@@ -28,7 +28,7 @@ func GetDownloadUrlHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 		ctx := context.WithValue(r.Context(), "fileId", path.FileId)
 		ctx = context.WithValue(ctx, "expires", expires)
-		l := fileserver.NewGetDownloadUrlLogic(ctx, svcCtx)
+		l := files.NewGetDownloadUrlLogic(ctx, svcCtx)
 		resp, err := l.GetDownloadUrl()
 		response.Response(r, w, resp, err)
 	}

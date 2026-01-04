@@ -3,8 +3,10 @@ package uploads
 import (
 	"context"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/types"
+	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +26,30 @@ func NewCompleteMultipartUploadLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *CompleteMultipartUploadLogic) CompleteMultipartUpload(req *types.CompleteMultipartReq) (resp *types.CompleteMultipartResp, err error) {
-	// todo: add your logic here and delete this line
+	if req.UploadId == "" || len(req.Parts) == 0 {
+		return nil, xcode.NewErrCodeMsg(xcode.ErrInvalidParam, "uploadId or parts empty")
+	}
+	uid, _ := l.ctx.Value("uid").(uint64)
+	var parts []*pb.CompletedPart
+	for _, p := range req.Parts {
+		parts = append(parts, &pb.CompletedPart{
+			PartNumber: p.PartNumber,
+			Etag:       p.ETag,
+		})
+	}
+	rpcResp, err := l.svcCtx.FilesRpc.CompleteMultipartUpload(l.ctx, &pb.CompleteMultipartUploadReq{
+		UploadId: req.UploadId,
+		Parts:    parts,
+		Uid:      uid,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.CompleteMultipartResp{
+		FileId: rpcResp.FileId,
+		Bucket: rpcResp.Bucket,
+		Key:    rpcResp.ObjectName,
+		Size:   rpcResp.Size,
+	}, nil
 }

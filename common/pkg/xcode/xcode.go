@@ -24,12 +24,13 @@ const (
 
 // Client errors (2000~2999)
 const (
-	ParamError     Xcode = 2000 // Parameter Error
-	MissingParam   Xcode = 2001 // Missing Parameter
-	MethodNotAllow Xcode = 2002 // Method Not Allowed
-	Unauthorized   Xcode = 2003 // Unauthorized
-	Forbidden      Xcode = 2004 // Forbidden
-	NotFound       Xcode = 2005 // Not Found
+	ParamError      Xcode = 2000 // Parameter Error
+	MissingParam    Xcode = 2001 // Missing Parameter
+	MethodNotAllow  Xcode = 2002 // Method Not Allowed
+	Unauthorized    Xcode = 2003 // Unauthorized
+	Forbidden       Xcode = 2004 // Forbidden
+	NotFound        Xcode = 2005 // Not Found
+	ErrInvalidParam Xcode = 2006 // Invalid Parameter
 )
 
 // Server errors (3000~3999)

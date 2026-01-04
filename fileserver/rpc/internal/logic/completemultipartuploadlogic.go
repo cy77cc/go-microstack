@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/model"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"
@@ -34,13 +35,13 @@ func (l *CompleteMultipartUploadLogic) CompleteMultipartUpload(in *pb.CompleteMu
 	// 注意：CompleteMultipartUpload 通常意味着已经传完了，但为了幂等性，可以检查
 	// 另外，如果 Initiated 时带了 Hash，这里可以先查库
 	rec, err := l.svcCtx.UploadModel.FindOneByUploadId(l.ctx, in.UploadId)
-	if err != nil {
-		return nil, err
+	if err != nil && !errors.Is(err, model.ErrNotFound) {
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 
 	// 权限检查
 	if in.Uid > 0 && rec.Uploader != in.Uid {
-		return nil, errors.New("permission denied")
+		return nil, xcode.NewErrCodeMsg(xcode.PermissionDenied, "permission denied")
 	}
 
 	// 检查秒传
@@ -67,7 +68,7 @@ func (l *CompleteMultipartUploadLogic) CompleteMultipartUpload(in *pb.CompleteMu
 		parts = append(parts, svc.CompletedPart{PartNumber: int(p.PartNumber), ETag: p.Etag})
 	}
 	if _, err = stor.CompleteMultipart(l.ctx, rec.Bucket, rec.ObjectName, rec.UploadId, parts); err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.ServerError, "server error")
 	}
 	fileId := uuid.NewString()
 
@@ -89,7 +90,7 @@ func (l *CompleteMultipartUploadLogic) CompleteMultipartUpload(in *pb.CompleteMu
 			Status:      1,
 		})
 		if err != nil {
-			return err
+			return xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 		}
 
 		// 2. 更新上传任务状态
