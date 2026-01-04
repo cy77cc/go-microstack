@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cy77cc/go-microstack/common/logx"
-	"github.com/cy77cc/go-microstack/common/register/types"
-	"github.com/cy77cc/go-microstack/common/utils"
+	"github.com/cy77cc/go-microstack/common/pkg/logx"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/utils"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/model"
@@ -38,15 +38,15 @@ func NewNacosInstance(cfg *Config) (*Instance, error) {
 	}
 
 	cc := &constant.ClientConfig{
-		NamespaceId: cfg.Namespace,
-		LogLevel:    "warn",
-		Username:    cfg.Username,
-		Password:    cfg.Password,
-		ContextPath: cfg.ContextPath,
-		AccessKey:   cfg.IdentityKey,
-		SecretKey:   cfg.IdentityVal,
-		LogDir:      "log",
-		TimeoutMs:   cfg.TimeoutMs,
+		NamespaceId:         cfg.Namespace,
+		LogLevel:            "warn",
+		Username:            cfg.Username,
+		Password:            cfg.Password,
+		ContextPath:         cfg.ContextPath,
+		AccessKey:           cfg.IdentityKey,
+		SecretKey:           cfg.IdentityVal,
+		LogDir:              "log",
+		TimeoutMs:           cfg.TimeoutMs,
 		NotLoadCacheAtStart: true,
 	}
 

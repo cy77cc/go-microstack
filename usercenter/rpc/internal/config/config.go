@@ -1,8 +1,8 @@
 package config
 
 import (
-	"github.com/cy77cc/go-microstack/common/register"
-	"github.com/cy77cc/go-microstack/common/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register"
+	"github.com/cy77cc/go-microstack/common/pkg/types"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/zrpc"
 )

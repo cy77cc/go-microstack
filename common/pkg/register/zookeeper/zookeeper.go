@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 	"github.com/go-zookeeper/zk"
 )
 

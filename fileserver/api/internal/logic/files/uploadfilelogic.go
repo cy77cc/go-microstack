@@ -9,7 +9,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/cy77cc/go-microstack/common/xcode"
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 )
 
 type UploadFileLogic struct {
@@ -43,25 +43,24 @@ func (l *UploadFileLogic) UploadFile(req *types.UploadFileReq) (resp *types.Uplo
 
 	// 3. 调用 RPC 服务的 Upload 接口
 	res, err := l.svcCtx.FilesRpc.Upload(l.ctx, &pb.UploadReq{
-		Bucket: req.Bucket,
+		Bucket:      req.Bucket,
 		ContentType: req.ContentType,
-		Size: int64(len(fileData)),
-		Uid: uid,
-		Hash: req.Hash,
-		Data:   fileData,
+		Size:        int64(len(fileData)),
+		Uid:         uid,
+		Hash:        req.Hash,
+		Data:        fileData,
 	})
 
 	if err != nil {
 		return nil, xcode.NewErrCode(xcode.FileUploadFail)
 	}
 
-
 	// 5. 返回响应
 	return &types.UploadFileResp{
 		FileId: res.FileId,
 		Bucket: res.Bucket,
-		Key: res.ObjectName,
-		Size: res.Size,
-		ETag: res.Etag,
+		Key:    res.ObjectName,
+		Size:   res.Size,
+		ETag:   res.Etag,
 	}, nil
 }

@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/register"
-	"github.com/cy77cc/go-microstack/common/register/types"
-	"github.com/cy77cc/go-microstack/common/utils"
-	"github.com/cy77cc/go-microstack/common/xcode"
+	"github.com/cy77cc/go-microstack/common/pkg/register"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/utils"
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/config"
 	authserviceServer "github.com/cy77cc/go-microstack/usercenter/rpc/internal/server/authservice"
 	permissionserviceServer "github.com/cy77cc/go-microstack/usercenter/rpc/internal/server/permissionservice"
@@ -100,7 +100,7 @@ func main() {
 		pb.RegisterUserServiceServer(grpcServer, userserviceServer.NewUserServiceServer(ctx))
 		pb.RegisterRoleServiceServer(grpcServer, roleserviceServer.NewRoleServiceServer(ctx))
 		pb.RegisterPermissionServiceServer(grpcServer, permissionserviceServer.NewPermissionServiceServer(ctx))
-		
+
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}

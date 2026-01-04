@@ -3,6 +3,7 @@ package permissionservicelogic
 import (
 	"context"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
 
@@ -27,14 +28,14 @@ func (l *CheckPermissionLogic) CheckPermission(in *pb.CheckPermissionReq) (*pb.C
 	// 1. Get user roles
 	userRoles, err := l.svcCtx.UserRolesModel.FindAllByUserId(l.ctx, in.Uid)
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 
 	// 2. Check if any role has the permission
 	for _, ur := range userRoles {
 		rolePermissions, err := l.svcCtx.RolePermissionsModel.FindAllByRoleId(l.ctx, ur.RoleId)
 		if err != nil {
-			return nil, err
+			return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 		}
 
 		for _, rp := range rolePermissions {

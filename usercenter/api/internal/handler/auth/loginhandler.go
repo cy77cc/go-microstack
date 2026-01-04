@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/cy77cc/go-microstack/common/response"
+	"github.com/cy77cc/go-microstack/common/pkg/response"
 	"github.com/cy77cc/go-microstack/usercenter/api/internal/logic/auth"
 	"github.com/cy77cc/go-microstack/usercenter/api/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/api/internal/types"

@@ -6,8 +6,8 @@ import (
 
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/cryptx"
-	"github.com/cy77cc/go-microstack/common/xcode"
+	"github.com/cy77cc/go-microstack/common/pkg/cryptx"
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"

@@ -3,6 +3,7 @@ package permissionservicelogic
 import (
 	"context"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
 
@@ -26,7 +27,7 @@ func NewListPermissionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 func (l *ListPermissionsLogic) ListPermissions(in *pb.ListPermissionsReq) (*pb.ListPermissionsResp, error) {
 	permissions, total, err := l.svcCtx.PermissionsModel.FindAll(l.ctx, int64(in.Page), int64(in.PageSize))
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "list permissions failed")
 	}
 
 	var pbPermissions []*pb.Permission

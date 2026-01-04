@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/xcode"
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/fileserver/model"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/fileserver/rpc/pb"

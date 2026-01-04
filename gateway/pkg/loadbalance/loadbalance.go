@@ -3,7 +3,7 @@ package loadbalance
 import (
 	"errors"
 
-	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 )
 
 // LoadBalancer 负载均衡器接口

@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type GetPermissionLogic struct {
@@ -31,9 +30,9 @@ func (l *GetPermissionLogic) GetPermission(in *pb.GetPermissionReq) (*pb.Permiss
 	permission, err := l.svcCtx.PermissionsModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "permission not found")
+			return nil, xcode.NewErrCodeMsg(xcode.NotFound, "permission not found")
 		}
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 
 	return &pb.PermissionResp{

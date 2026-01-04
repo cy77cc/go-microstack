@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type CreatePermissionLogic struct {
@@ -30,10 +29,11 @@ func NewCreatePermissionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *CreatePermissionLogic) CreatePermission(in *pb.CreatePermissionReq) (*pb.PermissionResp, error) {
 	_, err := l.svcCtx.PermissionsModel.FindOneByCode(l.ctx, in.Code)
 	if err == nil {
-		return nil, status.Error(codes.AlreadyExists, "permission code already exists")
+		return nil, xcode.NewErrCodeMsg(xcode.PermissionAlreadyExist, "permission code already exists")
 	}
+
 	if !errors.Is(err, model.ErrNotFound) {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.NotFound, "permission code already exists")
 	}
 
 	newPermission := &model.Permissions{
@@ -48,12 +48,12 @@ func (l *CreatePermissionLogic) CreatePermission(in *pb.CreatePermissionReq) (*p
 
 	res, err := l.svcCtx.PermissionsModel.Insert(l.ctx, newPermission)
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "create permission failed")
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "create permission failed")
 	}
 
 	newPermission.Id = uint64(id)

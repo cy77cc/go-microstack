@@ -3,7 +3,7 @@ package users
 import (
 	"net/http"
 
-	"github.com/cy77cc/go-microstack/common/response"
+	"github.com/cy77cc/go-microstack/common/pkg/response"
 	"github.com/cy77cc/go-microstack/usercenter/api/internal/logic/users"
 	"github.com/cy77cc/go-microstack/usercenter/api/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/api/internal/types"

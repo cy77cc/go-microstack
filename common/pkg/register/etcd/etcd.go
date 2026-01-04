@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 

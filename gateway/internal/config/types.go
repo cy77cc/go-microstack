@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/redis"
-	"github.com/cy77cc/go-microstack/common/register"
+	"github.com/cy77cc/go-microstack/common/pkg/redis"
+	"github.com/cy77cc/go-microstack/common/pkg/register"
 )
 
 var (

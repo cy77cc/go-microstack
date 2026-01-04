@@ -3,7 +3,7 @@ package loadbalance
 import (
 	"sync/atomic"
 
-	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 )
 
 // RoundRobin 轮询负载均衡策略

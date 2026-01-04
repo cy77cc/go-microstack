@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/cy77cc/go-microstack/common/response"
+	"github.com/cy77cc/go-microstack/common/pkg/response"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/logic/fileserver"
 	"github.com/cy77cc/go-microstack/fileserver/api/internal/svc"
 	"github.com/zeromicro/go-zero/rest/httpx"

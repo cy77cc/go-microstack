@@ -5,11 +5,11 @@ import (
 	"errors"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/register/consul"
-	"github.com/cy77cc/go-microstack/common/register/etcd"
-	"github.com/cy77cc/go-microstack/common/register/nacos"
-	"github.com/cy77cc/go-microstack/common/register/types"
-	"github.com/cy77cc/go-microstack/common/register/zookeeper"
+	"github.com/cy77cc/go-microstack/common/pkg/register/consul"
+	"github.com/cy77cc/go-microstack/common/pkg/register/etcd"
+	"github.com/cy77cc/go-microstack/common/pkg/register/nacos"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/zookeeper"
 )
 
 // WithEndpoints 设置注册中心地址

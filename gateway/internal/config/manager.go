@@ -6,7 +6,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 	"gopkg.in/yaml.v3"
 )
 

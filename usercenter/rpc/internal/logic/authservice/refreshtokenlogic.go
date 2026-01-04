@@ -6,14 +6,13 @@ import (
 
 	"time"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type RefreshTokenLogic struct {
@@ -36,12 +35,12 @@ func (l *RefreshTokenLogic) RefreshToken(in *pb.RefreshTokenReq) (*pb.LoginResp,
 		return []byte(l.svcCtx.Config.JwtAuth.AccessSecret), nil
 	})
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "invalid refresh token")
+		return nil, xcode.NewErrCodeMsg(xcode.Unauthorized, "invalid refresh token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return nil, status.Error(codes.Unauthenticated, "invalid refresh token")
+		return nil, xcode.NewErrCodeMsg(xcode.TokenInvalid, "invalid refresh token")
 	}
 
 	userId := int64(claims["userId"].(float64))
@@ -50,7 +49,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *pb.RefreshTokenReq) (*pb.LoginResp,
 	user, err := l.svcCtx.UsersModel.FindOne(l.ctx, uint64(userId))
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return nil, status.Error(codes.Unauthenticated, "user not found")
+			return nil, xcode.NewErrCodeMsg(xcode.TokenInvalid, "user not found")
 		}
 		return nil, err
 	}
@@ -58,7 +57,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *pb.RefreshTokenReq) (*pb.LoginResp,
 	// Fetch Roles
 	userRoles, err := l.svcCtx.UserRolesModel.FindAllByUserId(l.ctx, user.Id)
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 	var roleCodes []string
 	for _, ur := range userRoles {
@@ -73,11 +72,11 @@ func (l *RefreshTokenLogic) RefreshToken(in *pb.RefreshTokenReq) (*pb.LoginResp,
 	accessExpire := l.svcCtx.Config.JwtAuth.AccessExpire
 	accessToken, err := l.getJwtToken(l.svcCtx.Config.JwtAuth.AccessSecret, now, accessExpire, int64(user.Id))
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.ServerError, "generate access token error")
 	}
 	newRefreshToken, err := l.getJwtToken(l.svcCtx.Config.JwtAuth.AccessSecret, now, accessExpire*72, int64(user.Id))
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.ServerError, "generate refresh token error")
 	}
 
 	return &pb.LoginResp{

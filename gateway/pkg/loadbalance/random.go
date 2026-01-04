@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 )
 
 // Random 随机负载均衡策略

@@ -4,12 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/cy77cc/go-microstack/usercenter/model"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/internal/svc"
 	"github.com/cy77cc/go-microstack/usercenter/rpc/pb"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -31,9 +29,9 @@ func (l *UpdatePermissionLogic) UpdatePermission(in *pb.UpdatePermissionReq) (*p
 	permission, err := l.svcCtx.PermissionsModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return nil, status.Error(codes.NotFound, "permission not found")
+			return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "permission not found")
 		}
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "database error")
 	}
 
 	// if in.Code != "" && in.Code != permission.Code {
@@ -68,7 +66,7 @@ func (l *UpdatePermissionLogic) UpdatePermission(in *pb.UpdatePermissionReq) (*p
 
 	err = l.svcCtx.PermissionsModel.Update(l.ctx, permission)
 	if err != nil {
-		return nil, err
+		return nil, xcode.NewErrCodeMsg(xcode.DatabaseError, "update permission failed")
 	}
 
 	return &pb.PermissionResp{

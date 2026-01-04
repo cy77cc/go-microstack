@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cy77cc/go-microstack/common/register/types"
+	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 	"github.com/hashicorp/consul/api"
 )
 

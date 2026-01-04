@@ -27,7 +27,7 @@ type AuditLog struct {
 func Log(ctx context.Context, entry AuditLog) {
 	// In a real system, this might push to Kafka, Elasticsearch, or a database.
 	// For now, we use structured logging via logx.
-	
+
 	// Ensure timestamp is set
 	if entry.Timestamp == 0 {
 		entry.Timestamp = time.Now().UnixMilli()

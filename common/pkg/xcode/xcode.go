@@ -43,14 +43,15 @@ const (
 
 // Business errors (4000~4999)
 const (
-	FileUploadFail   Xcode = 4000 // File Upload Failed
-	FileTypeInvalid  Xcode = 4001 // Invalid File Type
-	UserAlreadyExist Xcode = 4002 // User Already Exists
-	UserNotExist     Xcode = 4003 // User Not Exists
-	PasswordError    Xcode = 4004 // Password Error
-	TokenExpired     Xcode = 4005 // Token Expired
-	TokenInvalid     Xcode = 4006 // Token Invalid
-	PermissionDenied Xcode = 4007 // Permission Denied
+	FileUploadFail         Xcode = 4000 // File Upload Failed
+	FileTypeInvalid        Xcode = 4001 // Invalid File Type
+	UserAlreadyExist       Xcode = 4002 // User Already Exists
+	UserNotExist           Xcode = 4003 // User Not Exists
+	PasswordError          Xcode = 4004 // Password Error
+	TokenExpired           Xcode = 4005 // Token Expired
+	TokenInvalid           Xcode = 4006 // Token Invalid
+	PermissionDenied       Xcode = 4007 // Permission Denied
+	PermissionAlreadyExist Xcode = 4008
 )
 
 // Msg returns the message corresponding to the Xcode

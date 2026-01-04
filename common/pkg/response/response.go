@@ -3,8 +3,8 @@ package response
 import (
 	"net/http"
 
-	"github.com/cy77cc/go-microstack/common/utils"
-	"github.com/cy77cc/go-microstack/common/xcode"
+	"github.com/cy77cc/go-microstack/common/pkg/utils"
+	"github.com/cy77cc/go-microstack/common/pkg/xcode"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 

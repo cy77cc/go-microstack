@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cy77cc/go-microstack/common/audit"
+	"github.com/cy77cc/go-microstack/common/pkg/audit"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
