@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"sync"
 
 	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 	"github.com/cy77cc/go-microstack/gateway/internal/config"
@@ -25,6 +27,9 @@ type Handler struct {
 	discovery    types.Register
 	loadBalancer loadbalance.LoadBalancer
 	cfg          *config.MergedConfig
+	mu           sync.RWMutex
+	instances    map[string][]*types.ServiceInstance
+	subscribed   map[string]bool
 }
 
 // NewProxyHandler 创建新的代理处理器
@@ -32,6 +37,8 @@ func NewProxyHandler(d types.Register, lb loadbalance.LoadBalancer) *Handler {
 	return &Handler{
 		discovery:    d,
 		loadBalancer: lb,
+		instances:    make(map[string][]*types.ServiceInstance),
+		subscribed:   make(map[string]bool),
 	}
 }
 
@@ -57,8 +64,16 @@ func (h *Handler) proxy(c *gin.Context, serviceName, path, stripPrefix string) {
 		return
 	}
 
-	// 1. 服务发现
-	instances, err := h.discovery.GetService(c, serviceName, "")
+	var instances []*types.ServiceInstance
+	h.mu.RLock()
+	if cached, ok := h.instances[serviceName]; ok && len(cached) > 0 {
+		instances = cached
+	}
+	h.mu.RUnlock()
+	var err error
+	if len(instances) == 0 {
+		instances, err = h.discovery.GetService(c, serviceName, "")
+	}
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": fmt.Sprintf("service discovery error: %v", err)})
 		c.Abort()
@@ -215,6 +230,38 @@ func (h *Handler) proxyWebSocket(c *gin.Context, serviceName string) {
 
 func (h *Handler) OnConfigChange(config *config.MergedConfig) {
 	h.cfg = config
+	h.ensureSubscriptions()
+}
+
+func (h *Handler) ensureSubscriptions() {
+	if h.discovery == nil || h.cfg == nil {
+		return
+	}
+	seen := make(map[string]struct{})
+	for _, r := range h.cfg.Routes {
+		if r.Service == "" {
+			continue
+		}
+		if _, ok := seen[r.Service]; ok {
+			continue
+		}
+		seen[r.Service] = struct{}{}
+		if h.subscribed[r.Service] {
+			continue
+		}
+		ch, err := h.discovery.WatchService(context.Background(), r.Service, "")
+		if err != nil {
+			continue
+		}
+		h.subscribed[r.Service] = true
+		go func(svc string, updates <-chan []*types.ServiceInstance) {
+			for insts := range updates {
+				h.mu.Lock()
+				h.instances[svc] = insts
+				h.mu.Unlock()
+			}
+		}(r.Service, ch)
+	}
 }
 
 func (h *Handler) injectSecurityHeaders(req *http.Request) {

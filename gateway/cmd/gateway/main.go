@@ -86,7 +86,7 @@ func main() {
 
 		if err == nil {
 			logx.Infof("Connected to Register Center: %s", localConfig.Register.Type)
-
+		
 			// 加载全局配置
 			item, err := regClient.GetConfig(ctx, "gateway", "DEFAULT_GROUP")
 			if err != nil {
@@ -107,6 +107,34 @@ func main() {
 					logx.Errorf("Failed to parse router config from register center: %v", err)
 				}
 				logx.Info("Loaded router config from register center")
+			}
+			// 监听全局配置变更
+			if ch, err := regClient.WatchConfig(ctx, "gateway", "DEFAULT_GROUP"); err != nil {
+				logx.Errorf("Failed to watch global config: %v", err)
+			} else {
+				go func() {
+					for item := range ch {
+						if err := configManager.ParseRemoteConfig(item); err != nil {
+							logx.Errorf("Failed to parse changed global config: %v", err)
+							continue
+						}
+						logx.Info("Applied changed global config from register center")
+					}
+				}()
+			}
+			// 监听路由配置变更
+			if ch, err := regClient.WatchConfig(ctx, "gateway-router", "DEFAULT_GROUP"); err != nil {
+				logx.Errorf("Failed to watch router config: %v", err)
+			} else {
+				go func() {
+					for item := range ch {
+						if err := configManager.ParseRemoteConfig(item); err != nil {
+							logx.Errorf("Failed to parse changed router config: %v", err)
+							continue
+						}
+						logx.Info("Applied changed router config from register center")
+					}
+				}()
 			}
 
 			// 注册 Gateway 服务自身
