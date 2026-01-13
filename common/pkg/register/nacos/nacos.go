@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cy77cc/go-microstack/common/pkg/logx"
+	"github.com/cy77cc/go-microstack/common/pkg/logger"
 	"github.com/cy77cc/go-microstack/common/pkg/register/types"
 	"github.com/cy77cc/go-microstack/common/pkg/utils"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
@@ -21,12 +21,12 @@ func NewNacosInstance(cfg *Config) (*Instance, error) {
 	sc := make([]constant.ServerConfig, 0, 1)
 	for _, endpoint := range cfg.Endpoints {
 
-		logx.Infof("Connecting to Nacos: %s", endpoint)
+		logger.Infof("Connecting to Nacos: %s", endpoint)
 		ip := strings.Split(endpoint, ":")[0]
 		port, err := strconv.ParseUint(strings.Split(endpoint, ":")[1], 10, 64)
 
 		if err != nil {
-			logx.Errorf("failed to parse endpoint: %s", endpoint)
+			logger.Errorf("failed to parse endpoint: %s", endpoint)
 			continue
 		}
 
@@ -217,7 +217,7 @@ func (ins *Instance) WatchService(ctx context.Context, serviceName string, group
 		GroupName:   groupName,
 		SubscribeCallback: func(services []model.Instance, err error) {
 			if err != nil {
-				logx.Errorf("Error in service subscribe: %v", err)
+				logger.Errorf("Error in service subscribe: %v", err)
 				return
 			}
 
