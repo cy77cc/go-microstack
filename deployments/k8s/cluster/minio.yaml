@@ -146,9 +146,11 @@ spec:
             - name: time
               mountPath: /etc/localtime
               readOnly: true
-            - name: export
-              mountPath: /export
-          args: [ "server", "http://minio-{0...2}.minio-hl:9000/export", "--console-address", ":9001", "--address", ":9000" ]
+            - name: export1
+              mountPath: /export1
+            - name: export2
+              mountPath: /export2
+          args: [ "server", "http://minio-{0...2}.minio-hl:9000/export{1...2}", "--console-address", ":9001", "--address", ":9000" ]
           livenessProbe:
             httpGet:
               path: /minio/health/live
@@ -158,9 +160,13 @@ spec:
           hostPath:
             path: /etc/localtime
             type: File
+        - name: export1
+          hostPath:
+            path: /data/minio/export1
+            type: DirectoryOrCreate
         - name: export
           hostPath:
-            path: /data/minio/export
+            path: /data/minio/export2
             type: DirectoryOrCreate
       affinity:
         podAntiAffinity:
